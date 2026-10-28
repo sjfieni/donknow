@@ -2,8 +2,8 @@ import { randomInt, randomBytes, randomUUID, scrypt as scryptCallback, timingSaf
 import { promisify } from 'node:util';
 import { secretBox, fail } from './secrets.js';
 const scrypt = promisify(scryptCallback);
-export async function featureStore(db, directory) {
-  const box = await secretBox(directory);
+export async function featureStore(db, directory, env = process.env) {
+  const box = await secretBox(directory, env.INTEGRATION_TOKEN_KEY || '', env.INTEGRATION_KEY_SEED || '');
   db.exec('CREATE TABLE IF NOT EXISTS crypto_metadata (id INTEGER PRIMARY KEY CHECK(id=1), key_hash TEXT NOT NULL)');
   const existingKey = db.prepare('SELECT key_hash FROM crypto_metadata WHERE id=1').get();
   if (existingKey && existingKey.key_hash !== box.fingerprint) throw new Error('Original token encryption key is required for this database');

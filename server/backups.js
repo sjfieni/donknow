@@ -1,3 +1,4 @@
+import { configuredTokenKey } from './secrets.js';
 import { DatabaseSync, backup } from 'node:sqlite';
 import { createHash, createHmac, timingSafeEqual, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile, chmod, readdir, stat, unlink, copyFile, utimes } from 'node:fs/promises';
@@ -7,6 +8,7 @@ import { S3Client, PutObjectCommand, ListObjectsV2Command, DeleteObjectsCommand 
 const signedFields=manifest=>JSON.stringify(Object.fromEntries(Object.entries(manifest).filter(([key])=>key!=='signature').sort(([a],[b])=>a.localeCompare(b))));
 const hashFile = async path => { const hash = createHash('sha256'); for await (const chunk of createReadStream(path)) hash.update(chunk); return hash.digest('hex'); };
 export async function createBackup({ dataDirectory, backupDirectory, retentionDays = 14, upload = null }) {
+  if (process.env.STORE_DRIVER === 'turso') throw new Error('Local SQLite backups are unavailable for Turso; export the remote database instead');
   if (!Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 365) throw new Error('Backup retention must be 1 to 365 days');
   if (resolve(dataDirectory) === resolve(backupDirectory)) throw new Error('Backups must use a separate directory');
   await mkdir(backupDirectory, { recursive: true, mode: 0o700 }); await chmod(backupDirectory, 0o700);
@@ -26,7 +28,7 @@ export async function createBackup({ dataDirectory, backupDirectory, retentionDa
     let requiredKeyHash;
     const check = new DatabaseSync(path, { readOnly: true }); try { requiredKeyHash=check.prepare('SELECT key_hash FROM crypto_metadata WHERE id=1').get()?.key_hash; if (check.prepare('PRAGMA integrity_check').get().integrity_check !== 'ok') throw new Error('SQLite backup integrity check failed'); } finally { check.close(); }
     const manifest = { format: 'duckduck-sqlite-v2', file: name, createdAt: new Date().toISOString(), sha256: await hashFile(path), bytes: (await stat(path)).size, encryptionKeyIncluded: false, requiresOriginalTokenKey: true };
-    const key=process.env.INTEGRATION_TOKEN_KEY?Buffer.from(process.env.INTEGRATION_TOKEN_KEY,'base64'):await readFile(join(dataDirectory,'.token-key'));if(key.length!==32||createHash('sha256').update(key).digest('hex')!==requiredKeyHash)throw new Error('Original token key is required for signed backups');
+    const key=configuredTokenKey()??await readFile(join(dataDirectory,'.token-key'));if(key.length!==32||createHash('sha256').update(key).digest('hex')!==requiredKeyHash)throw new Error('Original token key is required for signed backups');
     manifest.signature=createHmac('sha256',key).update(signedFields(manifest)).digest('hex');
     await writeFile(path + '.json', JSON.stringify(manifest, null, 2), { flag: 'wx', mode: 0o600 });
     verified = true;
@@ -72,7 +74,8 @@ export async function restoreBackup({ file, targetDirectory, tokenKeyFile }) {
   return { restored: true };
 }
 export function backupScheduler(dataDirectory, env = process.env) {
-  const status = { enabled: env.BACKUP_ENABLED === '1', offsite: !!env.BACKUP_S3_BUCKET, lastSuccess: null, lastLocalSuccess: null, failed: false };
+  if (env.STORE_DRIVER === 'turso' && env.BACKUP_ENABLED === '1') throw new Error('Turso uses remote storage; local backup scheduling must be disabled');
+  const status = { storageDriver: env.STORE_DRIVER || 'sqlite', enabled: env.BACKUP_ENABLED === '1', offsite: !!env.BACKUP_S3_BUCKET, lastSuccess: null, lastLocalSuccess: null, failed: false };
   if (!status.enabled) return { status, stop() {} };
   const hours = Number(env.BACKUP_INTERVAL_HOURS || '24'); if (!Number.isFinite(hours) || hours < 1 || hours > 168) throw new Error('Backup interval must be 1 to 168 hours');
   const options = { dataDirectory, backupDirectory: env.BACKUP_DIR || join(dataDirectory, 'backups'), retentionDays: Number(env.BACKUP_RETENTION_DAYS || '14'), upload: s3Uploader(env) };

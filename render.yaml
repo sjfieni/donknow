@@ -1,9 +1,9 @@
-# Creates a paid service with a persistent disk. Review Render's quote before deploying.
+# Free web service; persistent data lives in a separately configured Turso free database.
 services:
   - type: web
     name: duckduck-test
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     autoDeploy: false
     dockerfilePath: ./Dockerfile
@@ -11,10 +11,6 @@ services:
     healthCheckPath: /api/health
     dockerCommand: >-
       sh -c 'export PUBLIC_ORIGIN="${RENDER_EXTERNAL_URL:?Missing Render public URL}"; exec node server.js'
-    disk:
-      name: duckduck-data
-      mountPath: /var/lib/duckduck
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -23,12 +19,16 @@ services:
       - key: TRUST_PROXY
         value: "1"
       - key: DATA_DIR
-        value: /var/lib/duckduck
+        value: /tmp/duckduck
       - key: BACKUP_DIR
-        value: /var/lib/duckduck/backups
+        value: /tmp/duckduck/backups
       - key: BACKUP_ENABLED
-        value: "1"
-      - key: BACKUP_INTERVAL_HOURS
-        value: "24"
-      - key: BACKUP_RETENTION_DAYS
-        value: "14"
+        value: "0"
+      - key: STORE_DRIVER
+        value: turso
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: INTEGRATION_KEY_SEED
+        generateValue: true

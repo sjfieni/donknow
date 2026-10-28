@@ -1,23 +1,21 @@
 import { featureStore } from './features-store.js';
-import { DatabaseSync } from 'node:sqlite';
+import { openDatabase } from './database.js';
 import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash } from 'node:crypto';
 import { promisify } from 'node:util';
-import { mkdir, chmod } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir } from 'node:fs/promises';
 const scrypt = promisify(scryptCallback);
-export async function openStore(directory) {
+export async function openStore(directory, { env = process.env, remoteFactory } = {}) {
   await mkdir(directory, { recursive: true, mode: 0o700 });
-  const path = join(directory, 'duckduck.sqlite');
-  const db = new DatabaseSync(path);
-  await chmod(path, 0o600);
-  db.exec(`PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;
+  const { db } = await openDatabase(directory, env, remoteFactory);
+  try {
+  db.exec(`PRAGMA foreign_keys = ON;
     CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, salt TEXT NOT NULL, created_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), expires_at INTEGER NOT NULL);
     CREATE INDEX IF NOT EXISTS sessions_user ON sessions(user_id);
     CREATE TABLE IF NOT EXISTS todos (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id), data TEXT NOT NULL);
     CREATE INDEX IF NOT EXISTS todos_user ON todos(user_id);
     CREATE TABLE IF NOT EXISTS migrations (name TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id));`);
-  const features = await featureStore(db, directory);
+  const features = await featureStore(db, directory, env);
   const digest = token => createHash('sha256').update(token).digest('hex');
   const publicUser = user => ({ id: user.id, email: user.email, emailVerified: !!user.email_verified_at });
   const findUser = email => db.prepare('SELECT * FROM users WHERE email = ?').get(email);
@@ -71,6 +69,7 @@ export async function openStore(directory) {
       } catch (error) { db.exec('ROLLBACK'); throw error; }
     },
   };
+  } catch (error) { db.close(); throw error; }
 }
 export function validDate(value) {
   if (value === null) return true;

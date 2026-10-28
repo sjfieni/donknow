@@ -1,10 +1,17 @@
 import { randomBytes, createCipheriv, createDecipheriv, createHmac, createHash } from 'node:crypto';
 import { readFile, writeFile, chmod } from 'node:fs/promises';
 import { join } from 'node:path';
-export async function secretBox(directory, supplied = process.env.INTEGRATION_TOKEN_KEY) {
-  let key;
-  if (supplied) { key = Buffer.from(supplied, 'base64'); if (key.length !== 32) throw new Error('INTEGRATION_TOKEN_KEY must be a base64-encoded 32-byte key'); }
-  else {
+export function configuredTokenKey(env = process.env) {
+  if (env.INTEGRATION_TOKEN_KEY) { const key = Buffer.from(env.INTEGRATION_TOKEN_KEY, 'base64'); if (key.length !== 32) throw new Error('INTEGRATION_TOKEN_KEY must be a base64-encoded 32-byte key'); return key; }
+  if (env.INTEGRATION_KEY_SEED) {
+    if (env.INTEGRATION_KEY_SEED.length < 32) throw new Error('INTEGRATION_KEY_SEED must contain at least 32 random characters');
+    return createHash('sha256').update('duckduck:integration-key:v1:').update(env.INTEGRATION_KEY_SEED).digest();
+  }
+  return null;
+}
+export async function secretBox(directory, supplied = process.env.INTEGRATION_TOKEN_KEY, seed = process.env.INTEGRATION_KEY_SEED) {
+  let key = configuredTokenKey({ INTEGRATION_TOKEN_KEY: supplied, INTEGRATION_KEY_SEED: seed });
+  if (!key) {
     const path = join(directory, '.token-key');
     try { key = await readFile(path); }
     catch (error) { if (error.code !== 'ENOENT') throw error; try { await writeFile(path, randomBytes(32), { flag: 'wx', mode: 0o600 }); } catch (e) { if (e.code !== 'EEXIST') throw e; } key = await readFile(path); }
