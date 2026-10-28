@@ -9,6 +9,8 @@ import { resolve, extname, sep } from 'node:path';
 import { realpath } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import { openStore, validDate, validTitle } from './server/store.js';
+if (!process.env.PUBLIC_ORIGIN && process.env.RENDER_EXTERNAL_URL) process.env.PUBLIC_ORIGIN = process.env.RENDER_EXTERNAL_URL;
+if (process.env.NODE_ENV === 'production') { try { const origin=new URL(process.env.PUBLIC_ORIGIN); if(origin.protocol!=='https:'||origin.origin!==process.env.PUBLIC_ORIGIN||origin.username||origin.password)throw new Error(); } catch { throw new Error('Production requires PUBLIC_ORIGIN as an exact HTTPS origin'); } }
 const root = fileURLToPath(new URL('.', import.meta.url));
 const store = await openStore(process.env.DATA_DIR || `${root}data`);
 const backupJob = backupScheduler(process.env.DATA_DIR || `${root}data`);
@@ -16,7 +18,6 @@ const mailer = createMailer();
 const worker = startMailWorker(store, mailer, process.env.NODE_ENV === 'test' ? 20 : 2000);
 const integrations = createIntegrations(store);
 const features = featureRoutes(store, mailer, worker, integrations, limited, clientAddress);
-if (process.env.NODE_ENV === 'production') { try { const origin=new URL(process.env.PUBLIC_ORIGIN); if(origin.protocol!=='https:'||origin.origin!==process.env.PUBLIC_ORIGIN||origin.username||origin.password)throw new Error(); } catch { throw new Error('Production requires PUBLIC_ORIGIN as an exact HTTPS origin'); } }
 const secureCookie = process.env.COOKIE_SECURE === '1' || process.env.NODE_ENV === 'production';
 const allowedOrigin = process.env.PUBLIC_ORIGIN || '';
 const attempts = new Map();

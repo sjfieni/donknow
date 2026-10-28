@@ -45,3 +45,9 @@
 - 내정보에서 `클라우드 DB 저장` 안내 확인
 
 이메일·OAuth는 별도 설정 후 사용할 수 있습니다. AI 연결과 아이폰 배포는 포함하지 않습니다. 원격 DB 드라이버는 로컬 HTTP 프로토콜 테스트 서버를 통해 재시작/계정 분리/트랜잭션/암호화 키 보존을 검증했습니다. 실제 Render·Turso 계정 생성과 공개 서버 접속은 아직 수행하지 않았습니다. 자세한 설정은 [운영 안내](operations.md)를 참고하세요.
+
+## 시작 명령 오류가 발생한 경우
+
+`export PUBLIC_ORIGIN=...; exec node server.js: not found` / 종료 코드 127은 이전 Docker 시작 명령이 잘못 해석된 경우다. 최신 설정은 단순한 `node server.js`를 사용하고 서버가 `RENDER_EXTERNAL_URL`을 직접 읽는다. 기존 `PUBLIC_ORIGIN`을 직접 설정한 경우 그 값을 우선하며 HTTPS 주소 검증은 유지한다.
+
+GitHub 업데이트 후 Render의 해당 Blueprint에서 **Manual sync**로 설정을 동기화한다. 서비스 설정의 Docker Command가 `node server.js`인지 확인하고, 배포가 시작되지 않으면 **Manual Deploy → Deploy latest commit**을 실행한다. Turso URL·토큰·기존 암호화 시드는 바꾸거나 지우지 않는다.

@@ -9,8 +9,7 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /api/health
-    dockerCommand: >-
-      sh -c 'export PUBLIC_ORIGIN="${RENDER_EXTERNAL_URL:?Missing Render public URL}"; exec node server.js'
+    dockerCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
