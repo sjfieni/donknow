@@ -12,6 +12,32 @@ try {
   async function ready() { const until=Date.now()+20000;while(Date.now()<until){try{await inside("const r=await fetch('http://127.0.0.1:3000/api/health');if(!r.ok)process.exit(1)");return;}catch{}await new Promise(resolve=>setTimeout(resolve,100));}throw new Error('Container readiness failed'); }
   await ready();
   await inside(`
+    import assert from 'node:assert/strict';import {readFile,access} from 'node:fs/promises';
+    const bundle=await readFile(process.env.SSL_CERT_FILE,'utf8');
+    assert.ok((bundle.match(/-----BEGIN CERTIFICATE-----/g)??[]).length>100,'Runtime needs native public root certificates for libSQL TLS');
+    await access(process.env.SSL_CERT_DIR);
+  `);
+  await inside(`
+    import assert from 'node:assert/strict';import http2 from 'node:http2';import {readFile,writeFile,rm} from 'node:fs/promises';import {spawn,execFileSync} from 'node:child_process';
+    const root='/tmp/fixture-root.crt',rootKey='/tmp/fixture-root.key',key='/tmp/fixture-tls.key',cert='/tmp/fixture-tls.crt',csr='/tmp/fixture-tls.csr',ext='/tmp/fixture-tls.ext';
+    const openssl=args=>execFileSync('openssl',args,{stdio:'ignore'});
+    openssl(['req','-x509','-newkey','rsa:2048','-nodes','-keyout',rootKey,'-out',root,'-days','1','-subj','/CN=duckduck test root','-addext','basicConstraints=critical,CA:TRUE']);
+    openssl(['req','-newkey','rsa:2048','-nodes','-keyout',key,'-out',csr,'-subj','/CN=localhost']);
+    await writeFile(ext,'subjectAltName=IP:127.0.0.1,DNS:localhost\\nbasicConstraints=critical,CA:FALSE\\nextendedKeyUsage=serverAuth\\n');
+    openssl(['x509','-req','-in',csr,'-CA',root,'-CAkey',rootKey,'-CAcreateserial','-out',cert,'-days','1','-extfile',ext]);
+    let received=0;const fixture=http2.createSecureServer({key:await readFile(key),cert:await readFile(cert),allowHTTP1:true},(req,res)=>{received++;res.writeHead(401,{'Content-Type':'application/json'});res.end('{}');});
+    await new Promise(resolve=>fixture.listen(0,'127.0.0.1',resolve));
+    async function probe(env){
+      const code="import Database from 'libsql';try{const db=new Database('https://127.0.0.1:"+fixture.address().port+"',{authToken:'fixture-token',timeout:2});db.prepare('SELECT 1').get();process.exitCode=2;}catch{}";
+      const child=spawn(process.execPath,['--input-type=module','-e',code],{env,stdio:'ignore'});
+      await new Promise((resolve,reject)=>{child.once('error',reject);child.once('exit',status=>status===0?resolve():reject(new Error('TLS fixture client failed')));});
+    }
+    try {
+      await probe({...process.env});assert.equal(received,0,'Unknown fixture root must be rejected');
+      await probe({...process.env,SSL_CERT_FILE:root});assert.ok(received>0,'Native libSQL must complete verified TLS with a trusted fixture root');
+    } finally {await new Promise(resolve=>fixture.close(resolve));await Promise.all([key,cert,root,rootKey,csr,ext,'/tmp/fixture-root.srl'].map(file=>rm(file,{force:true}))); }
+  `);
+  await inside(`
     import assert from 'node:assert/strict';import {writeFile} from 'node:fs/promises';
     const base='http://127.0.0.1:3000';
     const request=async(path,method='GET',body,token)=>{const response=await fetch(base+path,{method,headers:{'Content-Type':'application/json','X-Duckduck-Client':'native',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:response.status,data:await response.json()};};
@@ -28,6 +54,6 @@ try {
   await inside("import {openStore} from './server/store.js';const s=await openStore('/tmp/restored');const u=await s.login('container@example.test','container-fixture-password');if(!u||s.list(u.user.id).length!==1)throw new Error('Restored records missing');s.close();");
   await docker(['restart','--timeout','5',name]);await ready();
   await inside("import {readFile,access} from 'node:fs/promises';const token=await readFile('/var/lib/duckduck/.fixture-token','utf8');const r=await fetch('http://127.0.0.1:3000/api/todos',{headers:{Authorization:'Bearer '+token}});if((await r.json())[0]?.title!=='컨테이너 데이터 유지')throw new Error('Persistent record missing');let retained=false;try{await access('/run/secrets/extra_ca');retained=true;}catch{}if(retained)throw new Error('Build certificate retained');");
-  console.log('PASS: production container, protected API, web assets, private volumes, signed backup/restore, restart persistence; build CA is not retained');
+  console.log('PASS: native CA bundle + libSQL verified TLS, production container, protected API, web assets, private volumes, signed backup/restore, restart persistence; build CA is not retained');
 } catch(error) { if(started){const logs=await docker(['logs','--tail','30',name]).catch(()=>null);if(logs)console.error(logs.stdout+logs.stderr);}throw error; }
 finally { if(started)await docker(['rm','-f',name]).catch(()=>undefined);await docker(['volume','rm',data,backups]).catch(()=>undefined); }

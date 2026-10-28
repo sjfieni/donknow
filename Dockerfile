@@ -7,6 +7,8 @@ ENV EXPO_NO_TELEMETRY=1 EXPO_NO_CACHE=1 CI=1 EXPO_PUBLIC_AUTO_SERVER=1
 RUN npm run export:web -- --max-workers 2
 
 FROM node:24-bookworm-slim AS server
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && update-ca-certificates && rm -rf /var/lib/apt/lists/*
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt SSL_CERT_DIR=/etc/ssl/certs
 ENV NODE_ENV=production PORT=3000 DATA_DIR=/var/lib/duckduck BACKUP_DIR=/var/backups/duckduck WEB_DIR=/app/mobile-web
 WORKDIR /app
 COPY --chown=node:node package.json package-lock.json ./

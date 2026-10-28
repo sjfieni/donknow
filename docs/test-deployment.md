@@ -51,3 +51,9 @@
 `export PUBLIC_ORIGIN=...; exec node server.js: not found` / 종료 코드 127은 이전 Docker 시작 명령이 잘못 해석된 경우다. 최신 설정은 단순한 `node server.js`를 사용하고 서버가 `RENDER_EXTERNAL_URL`을 직접 읽는다. 기존 `PUBLIC_ORIGIN`을 직접 설정한 경우 그 값을 우선하며 HTTPS 주소 검증은 유지한다.
 
 GitHub 업데이트 후 Render의 해당 Blueprint에서 **Manual sync**로 설정을 동기화한다. 서비스 설정의 Docker Command가 `node server.js`인지 확인하고, 배포가 시작되지 않으면 **Manual Deploy → Deploy latest commit**을 실행한다. Turso URL·토큰·기존 암호화 시드는 바꾸거나 지우지 않는다.
+
+## 네이티브 TLS 인증서 오류
+
+`InvalidTlsConfiguration ... no valid native root CA certificates found`는 런타임 OS에 신뢰할 루트 CA 인증서가 없을 때 발생한다. Node.js의 내장 CA 저장소와 libSQL 네이티브 TLS 저장소는 다르다. Docker 런타임에 Debian의 `ca-certificates`를 설치하고 `SSL_CERT_FILE`/`SSL_CERT_DIR`를 표준 시스템 저장소로 지정했다. 인증서 검증을 끄지 않는다.
+
+이 변경은 이미지 재빌드가 필요하다. Render에서 **Manual Deploy → Deploy latest commit**으로 최신 코드를 배포한다. 캐시 문제로 이전 이미지가 사용되면 **Clear build cache & deploy**를 사용한다. Turso URL·토큰·암호화 시드는 바꾸지 않는다.
