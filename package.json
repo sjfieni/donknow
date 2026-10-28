@@ -1,0 +1,25 @@
+{
+  "name": "donknow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node scripts/check.mjs",
+    "test": "node --test test/*.test.js mobile/src/*.test.ts",
+    "preview:build": "node scripts/build-preview.js",
+    "mobile:start": "npm --prefix mobile start",
+    "mobile:check": "npm --prefix mobile run typecheck",
+    "mobile:test": "npm --prefix mobile test",
+    "data:import": "node scripts/import-legacy.js",
+    "backup": "node scripts/backup.js",
+    "test:container": "node scripts/container-smoke.mjs",
+    "build:container": "docker build -t duckduck:cloud-test ."
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1158.0"
+  }
+}

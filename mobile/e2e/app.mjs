@@ -1,0 +1,124 @@
+import http from 'node:http';
+import { readFile, mkdtemp, rm, readdir } from 'node:fs/promises';
+import { join, extname, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import { spawn } from 'node:child_process';
+import { once } from 'node:events';
+import assert from 'node:assert/strict';
+import { chromium } from 'playwright-core';
+const project=resolve(new URL('..',import.meta.url).pathname);
+const checkout=resolve(project,'..');
+const root=resolve(project,'dist-web');
+const artifacts=resolve(checkout,'artifacts');
+const server=http.createServer(async(req,res)=>{try{const file=resolve(root,'.'+new URL(req.url,'http://local').pathname);if(!file.startsWith(root+'/'))throw new Error('invalid');const path=file===root+'/'?root+'/index.html':file;const data=await readFile(path);res.writeHead(200,{'Content-Type':({'.js':'text/javascript','.html':'text/html; charset=utf-8','.ttf':'font/ttf','.ico':'image/x-icon'})[extname(path)]||'application/octet-stream'});res.end(data);}catch{try{res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});res.end(await readFile(root+'/index.html'));}catch{res.writeHead(404);res.end();}}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));
+const dir=await mkdtemp(join(tmpdir(),'duckduck-mobile-e2e-'));
+const api=spawn(process.execPath,['server.js'],{cwd:checkout,env:{...process.env,DATA_DIR:dir,PORT:'0',PUBLIC_ORIGIN:'https://duckduck-api.test',COOKIE_SECURE:'1',NODE_ENV:'test',MAIL_TRANSPORT:'test-outbox',TEST_MAIL_DIR:join(dir,'mail')},stdio:['ignore','pipe','pipe']});
+const port=await new Promise((resolve,reject)=>{api.once('error',reject);api.once('exit',code=>reject(new Error('API startup failed: '+code)));api.stdout.on('data',chunk=>{const match=String(chunk).match(/port (\d+)/);if(match)resolve(match[1]);});});
+async function readCode(subject){const until=Date.now()+5000;while(Date.now()<until){let files=[];try{files=await readdir(join(dir,'mail'));}catch{}for(const file of files.filter(name=>name.endsWith('.json'))){const value=JSON.parse(await readFile(join(dir,'mail',file),'utf8'));if(value.to==='mobile@example.test'&&value.subject.includes(subject))return /인증번호: (\d{6})/.exec(value.text)[1];}await new Promise(r=>setTimeout(r,20));}throw new Error('Fixture mail not delivered');}
+const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || '/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+try{
+const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});page.setDefaultTimeout(12000);
+const errors=[];page.on('pageerror',error=>errors.push(error.message));
+let failApi=false;
+await page.route('https://duckduck-api.test/**',async route=>{
+ const request=route.request(), path=new URL(request.url()).pathname;
+ if(!path.startsWith('/api/')){const response=await fetch(`http://127.0.0.1:${server.address().port}`+path);await route.fulfill({status:response.status,headers:{'content-type':response.headers.get('content-type')||'application/octet-stream'},body:Buffer.from(await response.arrayBuffer())});return;}
+ if(failApi){await route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'test outage'})});return;}
+ const source=await request.allHeaders(), headers={};for(const key of ['content-type','x-duckduck-client','cookie','authorization','origin'])if(source[key])headers[key]=source[key];
+ const response=await fetch(`http://127.0.0.1:${port}`+path,{method:request.method(),headers,...(request.postData()?{body:request.postData()}: {})});
+ const resultHeaders={'content-type':'application/json'};const cookie=response.headers.get('set-cookie');if(cookie)resultHeaders['set-cookie']=cookie;
+ await route.fulfill({status:response.status,headers:resultHeaders,body:await response.text()});
+});
+await page.goto('https://duckduck-api.test/');
+await page.getByRole('button',{name:'화면 먼저 체험하기',exact:true}).click();
+await page.getByRole('tab',{name:'Todo 리스트',exact:true}).waitFor();
+assert.equal(await page.getByRole('tab').count(),5);assert.equal(await page.getByTestId(/^todo-/).count(),2);
+await page.screenshot({path:join(artifacts,'mobile-todos.png')});
+await page.getByRole('button',{name:'할 일 추가',exact:true}).click();await page.getByRole('textbox',{name:'할 일 제목',exact:true}).fill('아이폰 앱 확인하기');await page.getByRole('button',{name:'저장',exact:true}).click();
+await page.getByText('아이폰 앱 확인하기',{exact:true}).waitFor();assert.equal(await page.getByTestId(/^todo-/).count(),3);
+
+const row=page.getByTestId(/^todo-/).filter({hasText:'아이폰 앱 확인하기'});await row.scrollIntoViewIfNeeded();const b=await row.boundingBox();
+await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await page.mouse.move(b.x+b.width/2+90,b.y+b.height/2,{steps:8});await page.mouse.up();
+await page.getByText('완료 · 4초 후 log로 이동',{exact:true}).waitFor();
+await new Promise(r=>setTimeout(r,3000));assert.equal(await page.getByTestId(/^todo-/).count(),3);await new Promise(r=>setTimeout(r,1300));assert.equal(await page.getByTestId(/^todo-/).count(),2);
+await page.getByRole('tab',{name:'log',exact:true}).click();await page.getByText('아이폰 앱 확인하기',{exact:true}).waitFor();await page.screenshot({path:join(artifacts,'mobile-log.png')});
+await page.getByRole('button',{name:'아이폰 앱 확인하기 되돌리기',exact:true}).click();await page.getByRole('tab',{name:'Todo 리스트',exact:true}).click();await page.getByText('아이폰 앱 확인하기',{exact:true}).waitFor();
+
+await page.getByRole('tab',{name:'캘린더',exact:true}).click();assert.equal(await page.getByRole('button',{name:/할 일 \d+개/}).count(),42);await page.screenshot({path:join(artifacts,'mobile-calendar.png')});
+await page.getByRole('tab',{name:'duckduck',exact:true}).click();
+await page.getByRole('button',{name:'할 일과 기록 찾기',exact:true}).click();
+await page.getByRole('textbox',{name:'할 일과 기록 검색',exact:true}).fill('회의 자료');await page.getByText('팀 회의 자료 준비하기',{exact:true}).waitFor();
+await page.getByRole('button',{name:'할 일 열기',exact:true}).click();await page.getByRole('textbox',{name:'할 일 제목',exact:true}).waitFor();assert.equal(await page.getByRole('textbox',{name:'할 일 제목',exact:true}).inputValue(),'팀 회의 자료 준비하기');await page.getByRole('button',{name:'닫기',exact:true}).click();
+await page.getByRole('button',{name:'할 일과 기록 찾기',exact:true}).click();await page.getByRole('textbox',{name:'할 일과 기록 검색',exact:true}).fill('중요한');await page.getByRole('tab',{name:'완료 기록',exact:true}).click();await page.getByText('오늘 가장 중요한 일 정하기',{exact:true}).waitFor();await page.setViewportSize({width:320,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.setViewportSize({width:390,height:844});await page.screenshot({path:join(artifacts,'mobile-record-search.png')});
+await page.getByRole('button',{name:'미완료로 되돌리기',exact:true}).click();await page.getByText('미완료 할 일로 되돌렸어요.',{exact:true}).waitFor();await page.getByText('일치하는 기록이 없어요. 다른 단어로 찾아보세요.',{exact:true}).waitFor();await page.getByRole('tab',{name:'미완료 기록',exact:true}).click();await page.getByText('오늘 가장 중요한 일 정하기',{exact:true}).waitFor();await page.getByRole('textbox',{name:'할 일과 기록 검색',exact:true}).fill('찾을수없는항목');await page.getByText('일치하는 기록이 없어요. 다른 단어로 찾아보세요.',{exact:true}).waitFor();await page.getByRole('button',{name:'닫기',exact:true}).click();
+await page.screenshot({path:join(artifacts,'mobile-duckduck.png')});await page.getByRole('textbox',{name:'덕에게 이야기하기',exact:true}).fill('임시 메모');await page.getByRole('button',{name:'덕에게 보내기',exact:true}).click();await page.getByRole('textbox',{name:'정리한 할 일',exact:true}).fill('');await page.getByRole('button',{name:'Todo 리스트에 추가',exact:true,disabled:true}).waitFor();await page.getByRole('button',{name:'초안 버리기',exact:true}).click();await page.getByText('무엇을 도와드릴까요?',{exact:true}).waitFor();
+await page.getByRole('textbox',{name:'덕에게 이야기하기',exact:true}).fill('덕에서 정리한 할 일 초안');await page.getByRole('button',{name:'덕에게 보내기',exact:true}).click();await page.getByRole('textbox',{name:'정리한 할 일',exact:true}).fill('덕에서 정리한 할 일');await page.screenshot({path:join(artifacts,'mobile-duck-draft.png')});await page.getByRole('button',{name:'Todo 리스트에 추가',exact:true}).click();await page.getByText('추가 완료 ✓',{exact:true}).waitFor();await page.getByRole('button',{name:'Todo 보기 →',exact:true}).click();await page.getByRole('button',{name:'덕에서 정리한 할 일 수정',exact:true}).waitFor();
+await page.getByRole('tab',{name:'duckduck',exact:true}).click();
+await page.getByRole('button',{name:'카카오톡 대화 붙여넣기',exact:true}).click();
+await page.getByRole('textbox',{name:'복사한 카카오톡 대화',exact:true}).fill('친구: 내일까지 자료 보내줘. 비공개 대화 원문');
+await page.getByRole('textbox',{name:'대화에서 정리한 할 일',exact:true}).fill('회의 자료 보내기');
+await page.screenshot({path:join(artifacts,'mobile-kakao-paste.png')});
+await page.getByRole('button',{name:'할 일 확인하기',exact:true}).click();
+assert.equal(await page.getByText('친구: 내일까지 자료 보내줘. 비공개 대화 원문',{exact:true}).count(),0);
+await page.getByRole('button',{name:'카카오톡 대화 붙여넣기',exact:true}).click();
+assert.equal(await page.getByRole('textbox',{name:'복사한 카카오톡 대화',exact:true}).inputValue(),'');
+await page.getByRole('button',{name:'닫기',exact:true}).click();
+await page.getByRole('button',{name:'Todo 리스트에 추가',exact:true}).click();
+await page.getByText('회의 자료 보내기',{exact:true}).waitFor();
+await page.getByRole('tab',{name:'Todo 리스트',exact:true}).click();
+await page.getByRole('button',{name:'회의 자료 보내기 수정',exact:true}).click();
+await page.evaluate(()=>{Object.defineProperty(navigator,'share',{configurable:true,value:async data=>{window.__sharedTodo=data.text;}});});
+await page.getByRole('button',{name:'카카오톡 등으로 공유',exact:true}).click();
+assert.equal(await page.evaluate(()=>window.__sharedTodo.includes('회의 자료 보내기')&&!window.__sharedTodo.includes('비공개 대화 원문')),true);
+await page.screenshot({path:join(artifacts,'mobile-kakao-share.png')});
+await page.getByRole('button',{name:'닫기',exact:true}).click();
+await page.getByRole('tab',{name:'내정보',exact:true}).click();await page.screenshot({path:join(artifacts,'mobile-profile.png')});
+await page.getByRole('button',{name:'아이폰 미리 알림 가져오기',exact:true}).click();await page.getByText('미리 알림 가져오기는 아이폰 앱에서 사용할 수 있어요.',{exact:true}).waitFor();await page.screenshot({path:join(artifacts,'mobile-apple-reminders.png')});await page.getByRole('button',{name:'돌아가기',exact:true}).click();
+await page.getByRole('button',{name:'Google 연결 안내',exact:true}).click();await page.getByText('클라우드 계정으로 로그인하면 외부 서비스를 연결할 수 있어요.',{exact:true}).waitFor();await page.getByRole('button',{name:'돌아가기',exact:true}).click();
+await page.getByRole('button',{name:'서버 연결 설정',exact:true}).click();await page.getByRole('textbox',{name:'클라우드 서버 주소',exact:true}).fill('https://duckduck-api.test');await page.getByRole('button',{name:'연결하기',exact:true}).click();await page.getByRole('button',{name:'처음이에요 · 회원가입',exact:true}).click();await page.getByRole('textbox',{name:'이메일',exact:true}).fill('mobile@example.test');await page.getByLabel('비밀번호',{exact:true}).fill('mobile-test-password');await page.screenshot({path:join(artifacts,'mobile-auth.png')});await page.getByRole('button',{name:'계정 만들기',exact:true}).click();await page.getByRole('tab',{name:'Todo 리스트',exact:true}).click();
+assert.equal(await page.getByTestId(/^todo-/).count(),0);
+await page.getByRole('tab',{name:'내정보',exact:true}).click();await page.getByRole('button',{name:'이메일 인증',exact:true}).click();await page.getByRole('button',{name:'인증번호 요청',exact:true}).click();await page.getByText('인증번호 전송을 요청했어요. 메일을 확인해주세요.',{exact:true}).waitFor();await page.screenshot({path:join(artifacts,'mobile-verification.png')});const verification=await readCode('이메일 인증');await page.getByRole('textbox',{name:'6자리 인증번호',exact:true}).fill(verification);await page.getByRole('button',{name:'인증 완료',exact:true}).click();await page.getByText('이메일 인증 완료',{exact:true}).waitFor();await page.screenshot({path:join(artifacts,'mobile-account-settings.png')});await page.getByRole('button',{name:'Google 연결 안내',exact:true}).click();await page.getByText('서비스 연결 설정이 아직 준비되지 않았어요.',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'Google 연결',exact:true}).isDisabled(),true);await page.screenshot({path:join(artifacts,'mobile-services.png')});await page.getByRole('checkbox',{name:'Google Tasks 읽기 권한',exact:true}).tap();await page.getByRole('checkbox',{name:'Google Tasks 읽기 권한',exact:true}).getByText('☑',{exact:true}).waitFor();
+const tasksFixture = async route => {
+ const url=new URL(route.request().url());
+ if(url.pathname==='/api/integrations') return route.fulfill({json:[{provider:'google',name:'Google',configured:true,connected:true,label:'테스트 계정',features:['tasks'],availableFeatures:['tasks']}]});
+ if(url.pathname.endsWith('/search')) return route.fulfill({json:{items:[{id:'fixture:tasks:list1:open-search',title:'테스트: 자료 준비',completed:false,listTitle:'업무',dueDate:null},{id:'fixture:tasks:list1:done-search',title:'테스트: 자료 검토 완료',completed:true,listTitle:'지난 업무',dueDate:null}],partial:true,searchedLists:5}});
+ if(url.pathname.endsWith('/resources')) return route.fulfill({json:{items:url.searchParams.get('status')==='completed'&&url.searchParams.has('channel')?[{id:'fixture:tasks:list1:done1',title:'테스트: 지난 회의 준비',kind:'task',completed:true}]:url.searchParams.has('channel')?[{id:'fixture:tasks:list1:task1',title:'테스트: 회의 준비',dueDate:'2030-01-01',kind:'task'}]:[{id:'list1',title:'테스트 목록',kind:'tasklist'}],nextCursor:null}});
+ return route.fallback();
+};
+await page.route('https://duckduck-api.test/api/integrations**',tasksFixture);
+await page.getByRole('button',{name:'연결 상태 새로고침',exact:true}).click();
+await page.getByRole('button',{name:'Google Tasks',exact:true}).click();
+await page.getByRole('button',{name:'테스트 목록',exact:true}).click();
+await page.getByRole('checkbox',{name:'테스트: 회의 준비',exact:true}).click();
+await page.getByRole('button',{name:'선택한 1개를 Todo에 추가',exact:true,disabled:false}).waitFor();
+await page.screenshot({path:join(artifacts,'mobile-google-tasks-fixture.png')});
+await page.getByRole('button',{name:'완료 기록 보기',exact:true}).click();
+await page.getByText('테스트: 지난 회의 준비',{exact:true}).waitFor();
+await page.getByText('완료 기록 · 참고용',{exact:true}).waitFor();
+assert.equal(await page.getByRole('checkbox',{name:'테스트: 지난 회의 준비',exact:true}).count(),0);
+await page.getByRole('button',{name:'선택한 0개를 Todo에 추가',exact:true,disabled:true}).waitFor();
+await page.screenshot({path:join(artifacts,'mobile-completed-reference-fixture.png')});
+await page.getByRole('button',{name:'미완료 할 일 보기',exact:true}).click();
+await page.getByRole('checkbox',{name:'테스트: 회의 준비',exact:true}).waitFor();
+
+await page.getByRole('button',{name:'Tasks 목록 다시 선택',exact:true}).click();await page.getByRole('button',{name:'선택한 0개를 Todo에 추가',exact:true,disabled:true}).waitFor();
+await page.getByRole('button',{name:'돌아가기',exact:true}).click();await page.getByRole('tab',{name:'duckduck',exact:true}).click();await page.getByRole('button',{name:'할 일과 기록 찾기',exact:true}).click();
+await page.getByRole('textbox',{name:'할 일과 기록 검색',exact:true}).fill('자료');await page.getByRole('button',{name:'Google Tasks에서 찾기',exact:true}).click();await page.getByText('테스트: 자료 검토 완료',{exact:true}).waitFor();await page.getByText('일부 기록만 검색했어요. 나머지는 서비스 연결 화면에서 목록별로 확인해주세요.',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'이 할 일 가져오기',exact:true}).count(),1);
+await page.getByRole('tab',{name:'완료 기록',exact:true}).click();await page.getByText('테스트: 자료 검토 완료',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'이 할 일 가져오기',exact:true}).count(),0);await page.screenshot({path:join(artifacts,'mobile-external-search-fixture.png')});
+await page.getByRole('textbox',{name:'할 일과 기록 검색',exact:true}).fill('다른 단어');await page.getByText('테스트: 자료 검토 완료',{exact:true}).waitFor({state:'hidden'});await page.getByRole('button',{name:'닫기',exact:true}).click();
+assert.equal(await page.evaluate(async()=>(await(await fetch('/api/todos')).json()).length),0);
+await page.unroute('https://duckduck-api.test/api/integrations**',tasksFixture);await page.getByRole('tab',{name:'Todo 리스트',exact:true}).click();
+await page.getByRole('button',{name:'할 일 추가',exact:true}).click();await page.getByRole('textbox',{name:'할 일 제목',exact:true}).fill('실제 클라우드 API 저장 검증');await page.getByRole('textbox',{name:'예정일 YYYY-MM-DD',exact:true}).fill('2030-01-01');await page.getByRole('switch',{name:'할 일 알림',exact:true}).click();await page.getByRole('textbox',{name:'알림 시간 HH:mm',exact:true}).fill('09:00');await page.setViewportSize({width:320,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:join(artifacts,'mobile-reminder.png')});await page.setViewportSize({width:390,height:844});await page.getByRole('button',{name:'저장',exact:true}).click();await page.getByText('실제 클라우드 API 저장 검증',{exact:true}).waitFor();
+failApi=true;await page.getByRole('checkbox',{name:'실제 클라우드 API 저장 검증 완료하기',exact:true}).click();await page.getByRole('alert').waitFor();assert.equal(await page.getByTestId(/^todo-/).count(),1);assert.equal(await page.getByRole('checkbox').isChecked(),false);failApi=false;await page.getByRole('button',{name:'데이터 다시 불러오기',exact:true}).click();await page.getByRole('alert').waitFor({state:'hidden'});
+const saved=await page.evaluate(async()=>await(await fetch('/api/todos')).json());assert.equal(saved[0].title,'실제 클라우드 API 저장 검증');assert.equal(saved.length,1);assert.ok(saved[0].reminderAt.startsWith('2030-01-01')); 
+await page.reload();await page.getByText('실제 클라우드 API 저장 검증',{exact:true}).waitFor();
+await page.getByRole('tab',{name:'내정보',exact:true}).click();await page.getByRole('button',{name:'로그아웃',exact:true}).click();await page.getByRole('button',{name:'로그인',exact:true}).waitFor();assert.equal(await page.getByTestId(/^todo-/).count(),0);
+await page.getByRole('button',{name:'처음이에요 · 회원가입',exact:true}).click();await page.getByRole('textbox',{name:'이메일',exact:true}).fill('other@example.test');await page.getByLabel('비밀번호',{exact:true}).fill('other-test-password');await page.getByRole('button',{name:'계정 만들기',exact:true}).click();await page.getByRole('tab',{name:'Todo 리스트',exact:true}).waitFor();assert.equal(await page.getByTestId(/^todo-/).count(),0);
+await page.evaluate(async()=>{await fetch('/api/auth/logout',{method:'POST',headers:{'Content-Type':'application/json','X-Duckduck-Client':'web'},body:'{}'});});
+await page.getByRole('button',{name:'할 일 추가',exact:true}).click();await page.getByRole('textbox',{name:'할 일 제목',exact:true}).fill('만료된 로그인');await page.getByRole('button',{name:'저장',exact:true}).click();await page.getByRole('button',{name:'로그인',exact:true}).waitFor();assert.equal(await page.getByRole('textbox',{name:'할 일 제목',exact:true}).count(),0);
+await page.getByRole('button',{name:'비밀번호를 잊었어요',exact:true}).click();await page.getByRole('textbox',{name:'계정 이메일',exact:true}).fill('mobile@example.test');await page.getByRole('button',{name:'인증번호 요청',exact:true}).click();const reset=await readCode('비밀번호');await page.getByRole('textbox',{name:'6자리 인증번호',exact:true}).fill(reset);await page.getByLabel('새 비밀번호',{exact:true}).fill('changed-fixture-password');await page.getByRole('button',{name:'비밀번호 변경',exact:true}).click();await page.getByRole('button',{name:'로그인',exact:true}).waitFor();await page.getByRole('textbox',{name:'이메일',exact:true}).fill('mobile@example.test');await page.getByLabel('비밀번호',{exact:true}).fill('changed-fixture-password');await page.getByRole('button',{name:'로그인',exact:true}).click();await page.getByRole('button',{name:'실제 클라우드 API 저장 검증 수정',exact:true}).waitFor();
+const deletingUser=await page.evaluate(async()=>(await(await fetch('/api/auth/session')).json()).user.id);await page.getByRole('tab',{name:'내정보',exact:true}).click();await page.getByRole('button',{name:'표시 이름 편집',exact:true}).click();await page.getByRole('textbox',{name:'표시 이름',exact:true}).fill('기기 설정 삭제 테스트');await page.getByRole('button',{name:'저장',exact:true}).click();assert.equal(await page.evaluate(id=>Object.keys(localStorage).some(key=>key.includes(id)),deletingUser),true);await page.getByRole('button',{name:'계정 삭제',exact:true}).click();await page.setViewportSize({width:320,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.getByLabel('삭제 확인용 현재 비밀번호',{exact:true}).fill('changed-fixture-password');await page.getByRole('checkbox',{name:'계정 삭제에 동의',exact:true}).click();await page.getByRole('button',{name:'계정과 기록 삭제',exact:true}).click();await page.getByRole('button',{name:'로그인',exact:true}).waitFor();assert.equal(await page.getByTestId(/^todo-/).count(),0);assert.equal(await page.evaluate(async()=>(await fetch('/api/auth/session')).status),401);assert.equal(await page.evaluate(id=>Object.keys(localStorage).some(key=>key.includes(id)),deletingUser),false);
+for(const width of [320,390,1280]){await page.setViewportSize({width,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);}
+assert.deepEqual(errors,[]);console.log('PASS: actual Expo web bundle; five tabs, native PanResponder swipe + 4-second removal, log restore, 42-day calendar, Duck record search/filter/open/restore, draft edit/discard and transfer, service disclosure, signup, cloud API create and cookie reload, logout, tenant isolation, session expiry clears modal, demo/cloud separation, failed writes preserve state, retry recovery, email verification, password reset/relogin, reminder persistence, missing OAuth setup, Google Tasks list selection and external search/reference-only results (fixture), Apple Reminders web guidance, Kakao paste and share message, account deletion, responsive widths');
+}finally{await browser.close();server.close();const exited=once(api,'exit');api.kill();await exited;await rm(dir,{recursive:true,force:true});}

@@ -1,0 +1,41 @@
+{
+  "name": "duckduck-mobile",
+  "description": "duckduck iPhone app",
+  "license": "0BSD",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-community/datetimepicker": "^9.2.1",
+    "expo": "~58.0.19",
+    "expo-calendar": "~58.0.6",
+    "expo-notifications": "~58.1.6",
+    "expo-secure-store": "~58.0.2",
+    "expo-status-bar": "~58.0.4",
+    "expo-web-browser": "~58.0.6",
+    "react": "19.3.0",
+    "react-dom": "^19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-web": "^0.21.4"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "playwright-core": "1.64.1",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "export:ios": "expo export --platform ios --output-dir dist-ios",
+    "export:web": "expo export --platform web --output-dir dist-web",
+    "test": "node --test src/domain.test.ts src/reminder-plan.test.ts",
+    "test:e2e": "node e2e/app.mjs",
+    "test:web-auth": "node e2e/web-auth.mjs"
+  },
+  "private": true
+}
