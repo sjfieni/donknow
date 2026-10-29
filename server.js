@@ -50,10 +50,18 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost'), path = url.pathname;
     if (await features.callback(req, res, path, url)) return;
+    if (/^\/project-assets\/[a-f0-9]{64}\.(png|jpg|jpeg|gif|webp|svg|ico)$/.test(path) && req.method === 'GET') {
+      try {
+        const content = await readFile(root+'public'+path);
+        const mime = {'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.gif':'image/gif','.webp':'image/webp','.svg':'image/svg+xml','.ico':'image/x-icon'};
+        res.writeHead(200, {'Content-Type':mime[extname(path)],'Cache-Control':'public,max-age=31536000,immutable'});res.end(content);
+      } catch (error) { if(error.code !== 'ENOENT') throw error; send(404,{error:'이미지를 찾을 수 없어요.'}); }
+      return;
+    }
     const projectFiles={'/project':'project.html','/project/':'project.html','/project-comments.js':'project-comments.js','/project-comments.css':'project-comments.css'};
     if(projectFiles[path]&&req.method==='GET'){
       const file=projectFiles[path],type=file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8';
-      const content=await readFile(root+'public/'+file);res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','Content-Security-Policy':"default-src 'none'; img-src data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"});res.end(content);return;
+      const content=await readFile(root+'public/'+file);res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','Content-Security-Policy':"default-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"});res.end(content);return;
     }
     if (path.startsWith('/api/')) {
       const origin = req.headers.origin;

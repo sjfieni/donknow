@@ -218,6 +218,7 @@ e45632a Add opt-in task sync, cloud recovery and remaining service tooling
 52165c1 Add complete single-page handoff, image inventory and AI instructions
 58e72fd Exclude handoff downloads from Docker build context
 9ee398a Publish full project HTML with persistent authenticated feedback
+a130c93 Refresh published document snapshot and feedback instructions
 ```
 
 - 새 범위의 실제 외부 연결·아이폰 기기 확인: 아직 완료로 표시하지 않음.

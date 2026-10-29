@@ -27,3 +27,7 @@
 문서 재생성: `python scripts/build-handoff.py`. API/브라우저 검증: `node --test test/project-comments.test.js`, `npm --prefix mobile run test:project`.
 
 Render 자동 배포는 꺼져 있다. 최신 코드 저장 후 서비스의 **Manual Deploy → Deploy latest commit**을 실행해야 공개 페이지가 생긴다. Live 상태는 실제 대시보드/응답으로 확인한다.
+
+### 문서 로딩과 목차
+
+온라인 HTML은 이미지를 별도 해시 파일(`/project-assets/`)로 분리하고 지연 로딩합니다. 이미지 캐시는 1년이며 내용이 바뀌면 주소가 바뀝니다. 오프라인 HTML은 기존처럼 이미지를 포함합니다. 넓은 화면에는 왼쪽 고정 목차, 작은 화면에는 상단 목차를 제공합니다. 무료 Render의 휴면 후 첫 요청 지연은 남습니다.

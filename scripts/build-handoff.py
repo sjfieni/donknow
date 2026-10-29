@@ -322,6 +322,24 @@ style='body{font-family:system-ui,sans-serif;max-width:1040px;margin:0 auto;padd
 (OUT/'duckduck-handoff.html').write_text('<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>duckduck 인계 문서</title><style>'+style+'</style><body>'+'\n'.join(html_parts)+'</body></html>')
 # Published HTML uses the same full document, with persistent account-owned feedback.
 project = (OUT/'duckduck-handoff.html').read_text()
+# Keep the online document small; immutable images load only near the viewport.
+asset_dir = ROOT/'public/project-assets'
+asset_dir.mkdir(exist_ok=True)
+for item in manifest:
+    data = (ROOT/item['path']).read_bytes()
+    suffix = Path(item['path']).suffix.lower()
+    filename = item['sha256'] + suffix
+    (asset_dir/filename).write_bytes(data)
+    encoded = base64.b64encode(data).decode()
+    project = re.sub(r'src="data:[^;]+;base64,'+re.escape(encoded)+r'"', 'loading="lazy" decoding="async" width="960" height="720" src="/project-assets/'+filename+'"', project)
+toc = []
+def section_heading(match):
+    index = len(toc)
+    title = re.sub('<[^>]+>', '', match[1])
+    toc.append('<a href="#section-'+str(index)+'">'+title+'</a>')
+    return '<h2 id="section-'+str(index)+'">'+match[1]+'</h2>'
+project = re.sub(r'<h2>(.*?)</h2>', section_heading, project)
+project = project.replace('<body>', '<body><aside class="project-toc" aria-label="목차"><details open><summary>목차</summary><nav>'+''.join(toc)+'<a href="#feedback">댓글 · 수정 요청</a></nav></details></aside>', 1)
 project = project.replace('<title>', '<meta name="robots" content="noindex"><meta name="document-version" content="'+CODE+'"><link rel="stylesheet" href="/project-comments.css"><title>',1)
 project = project.replace('<body>', '<body><nav class="project-nav"><strong>duckduck 개발 문서</strong><a href="/">덕 앱</a><a href="#feedback">댓글·수정 요청</a><button id="feedback-selection" type="button">선택한 문장에 댓글</button></nav>',1)
 feedback = r'''<section id="feedback" class="feedback"><h2>댓글 · 수정 요청</h2><p class="feedback-warning">이 문서와 댓글은 링크를 가진 사람이 볼 수 있어요. 비밀번호·API 키·개인정보는 적지 마세요. 덕 계정으로 로그인하고 이메일 인증을 마치면 작성할 수 있어요.</p><p>문서의 절이나 이미지 옆 수정 요청 버튼으로 위치를 지정하세요. 댓글을 남긴 뒤 AI에게 이 페이지 주소와 댓글 위치를 알려주세요. 자동으로 감시하거나 수정하지는 않습니다.</p>
