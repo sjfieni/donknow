@@ -74,3 +74,5 @@ npm run preview:build
 GitHub 코드를 Render에서 배포할 수 있도록 `render.yaml`을 추가했습니다. 기본은 Render Free 서버와 Turso 무료 DB를 연결하는 구성입니다. 유료 디스크 없이 별도 클라우드 DB에 저장하며 Turso 계정의 URL·토큰 설정이 필요합니다. 무료 한도와 대기 후 첫 접속 지연이 있습니다. [간단한 배포 순서](docs/test-deployment.md)를 참고하세요. 자동 재배포와 로컬 백업은 꺼져 있으며 이메일·OAuth·DB 내보내기는 별도 설정입니다.
 
 무료 Render 배포는 `STORE_DRIVER=turso`를 사용합니다. DB 연결 정보와 환경에 보존된 암호화 키가 없으면 시작하지 않으며 로컬 임시 저장소로 대체하지 않습니다. 기존 Docker Compose의 SQLite/영구 볼륨 구성도 유지합니다. 실제 무료 계정 연결은 아직 검증하지 않았습니다.
+
+현재 공개 테스트 주소에서 개인 계정의 이메일 인증과 Google Tasks를 연결하는 순서는 [이메일·Google 연결 안내](docs/connect-google.md)에 정리했습니다. Resend 기본 발신자는 가입자 본인 이메일 테스트에만 사용할 수 있습니다.
