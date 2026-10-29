@@ -14,7 +14,8 @@
     "data:import": "node scripts/import-legacy.js",
     "backup": "node scripts/backup.js",
     "test:container": "node scripts/container-smoke.mjs",
-    "build:container": "docker build -t duckduck:cloud-test ."
+    "build:container": "docker build -t duckduck:cloud-test .",
+    "backup:remote": "node scripts/remote-backup.js"
   },
   "engines": {
     "node": ">=24"

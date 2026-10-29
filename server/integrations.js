@@ -1,11 +1,11 @@
 import { randomBytes, createHash, randomUUID } from 'node:crypto';
 import { fail } from './secrets.js';
 const definitions = {
-  google: { name: 'Google', prefix: 'GOOGLE', auth: 'https://accounts.google.com/o/oauth2/v2/auth', token: 'https://oauth2.googleapis.com/token', features: ['calendar', 'gmail', 'drive', 'tasks'] },
+  google: { name: 'Google', prefix: 'GOOGLE', auth: 'https://accounts.google.com/o/oauth2/v2/auth', token: 'https://oauth2.googleapis.com/token', features: ['calendar', 'gmail', 'drive', 'tasks', 'tasksWrite'] },
   slack: { name: 'Slack', prefix: 'SLACK', auth: 'https://slack.com/oauth/v2/authorize', token: 'https://slack.com/api/oauth.v2.access', features: ['channels', 'messages'] },
   notion: { name: 'Notion', prefix: 'NOTION', auth: 'https://api.notion.com/v1/oauth/authorize', token: 'https://api.notion.com/v1/oauth/token', features: ['pages'] },
 };
-const googleScopes = { tasks: 'https://www.googleapis.com/auth/tasks.readonly', calendar: 'https://www.googleapis.com/auth/calendar.readonly', gmail: 'https://www.googleapis.com/auth/gmail.readonly', drive: 'https://www.googleapis.com/auth/drive.metadata.readonly' };
+const googleScopes = { tasksWrite: 'https://www.googleapis.com/auth/tasks', tasks: 'https://www.googleapis.com/auth/tasks.readonly', calendar: 'https://www.googleapis.com/auth/calendar.readonly', gmail: 'https://www.googleapis.com/auth/gmail.readonly', drive: 'https://www.googleapis.com/auth/drive.metadata.readonly' };
 const expiresAt = seconds => { if(seconds==null)return null;const value=Number(seconds);if(!Number.isFinite(value)||value<=0||value>31536000)throw fail(502,'서비스 인증 유효시간을 확인하지 못했어요.');return Date.now()+value*1000; };
 const title = (value, fallback = '제목 없음') => (typeof value === 'string' && value.trim() ? value.trim() : fallback).slice(0, 120);
 export function createIntegrations(store, env = process.env, fetcher = fetch) {
@@ -50,12 +50,13 @@ export function createIntegrations(store, env = process.env, fetcher = fetch) {
     return locks.get(key);
   }
   return {
-    status(userId) { return Object.entries(definitions).map(([provider, definition]) => { const config = settings(provider), connection = store.connection(userId, provider); return { provider, name: definition.name, configured: config.configured, connected: !!connection, label: connection?.label ?? null, features: connection?.features ?? [], availableFeatures: definition.features, updatedAt: connection?.updatedAt ?? null }; }); },
+    status(userId) { return Object.entries(definitions).map(([provider, definition]) => { const config = settings(provider), connection = store.connection(userId, provider); return { provider, name: definition.name, configured: config.configured, connected: !!connection, label: connection?.label ?? null, features: connection?.features ?? [], availableFeatures: definition.features, taskSyncEnabled: !!connection?.taskSyncEnabled, updatedAt: connection?.updatedAt ?? null }; }); },
     start(userId, provider, features, native = false) {
       const config = settings(provider); if (!config.configured) throw fail(503, '관리자가 이 서비스의 OAuth 앱을 등록하면 연결할 수 있어요.');
       if (!store.account(userId)?.emailVerified) throw fail(403, '이메일 인증을 먼저 완료해주세요.');
-      const selected = provider === 'google' ? features : config.features;
+      let selected = provider === 'google' ? features : config.features;
       if (!Array.isArray(selected) || !selected.length || selected.some(feature => !config.features.includes(feature))) throw fail(400, '연결할 기능을 선택해주세요.');
+      if(provider==='google'&&selected.includes('tasksWrite'))selected=[...new Set([...selected,'tasks'])];
       const verifier = randomBytes(32).toString('base64url');
       const state = store.createOAuthState(userId, provider, { verifier, features: [...new Set(selected)], native });
       const url = new URL(config.auth); url.searchParams.set('client_id', config.clientId); url.searchParams.set('redirect_uri', config.callback); url.searchParams.set('response_type', 'code'); url.searchParams.set('state', state);
@@ -76,23 +77,26 @@ export function createIntegrations(store, env = process.env, fetcher = fetch) {
       if(provider==='google'){const profile=await providerRequest('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+value.access_token}});if(typeof profile.sub!=='string')throw fail(502,'Google 계정을 확인하지 못했어요.');accountId=profile.sub;label=typeof profile.email==='string'?profile.email:'Google 계정';}
       else if(provider==='slack'){accountId=value.team?.id;label=title(value.team?.name,'Slack 워크스페이스');}
       else{accountId=value.workspace_id;label=title(value.workspace_name,'Notion 워크스페이스');}
-      const features = provider === 'google' && typeof value.scope === 'string' ? state.features.filter(feature => value.scope.split(' ').includes(googleScopes[feature])) : state.features;
+      const features = provider === 'google' && typeof value.scope === 'string' ? state.features.filter(feature => (value.scope.split(' ').includes(googleScopes[feature]) || (feature==='tasks' && value.scope.split(' ').includes(googleScopes.tasksWrite)))) : state.features;
       if (!features.length) throw fail(403, '선택한 정보에 대한 읽기 권한이 승인되지 않았어요.');
       const connectionId=accountId && previous?.accountId===accountId ? previous.connectionId : randomUUID();
       store.clearResourceCache(state.userId,provider);
-      store.saveConnection(state.userId, provider, { accessToken: value.access_token, refreshToken: value.refresh_token ?? (accountId && previous?.accountId===accountId ? previous.refreshToken : null) ?? null, expiresAt: expiresAt(value.expires_in), features, accountId:accountId??null,connectionId }, label);
+      store.saveConnection(state.userId, provider, { accessToken: value.access_token, refreshToken: value.refresh_token ?? (accountId && previous?.accountId===accountId ? previous.refreshToken : null) ?? null, expiresAt: expiresAt(value.expires_in), features, taskSyncEnabled: !!(features.includes('tasksWrite') && previous?.accountId===accountId && previous?.taskSyncEnabled), accountId:accountId??null,connectionId }, label);
       return { native: state.native };
     },
-    async resources(userId, provider, feature, channel, cursor, taskStatus = 'incomplete') {
+    async resources(userId, provider, feature, channel, cursor, taskStatus = 'incomplete', month) {
       if (!['incomplete', 'completed'].includes(taskStatus)) throw fail(400, '조회할 완료 상태를 확인해주세요.');
       if (cursor && (typeof cursor !== 'string' || cursor.length > 3000)) throw fail(400, '페이지 정보를 확인해주세요.');
-      const config = settings(provider); if (!config.features.includes(feature)) throw fail(400, '지원하지 않는 자료 종류예요.');
+      const config = settings(provider); if (feature === 'tasksWrite' || !config.features.includes(feature)) throw fail(400, '지원하지 않는 자료 종류예요.');
       const record = await token(userId, provider); if (!record.features.includes(feature)) throw fail(403, '이 기능의 읽기 권한을 추가로 승인해주세요.');
       const headers = { Authorization: 'Bearer ' + record.accessToken }; let items = [], nextCursor = null;
       if (provider === 'google' && feature === 'calendar') {
-        const query = new URLSearchParams({ timeMin: new Date(new Date().setUTCHours(0,0,0,0)).toISOString(), timeMax: new Date(new Date().setUTCHours(0,0,0,0) + 30 * 86400000).toISOString(), singleEvents: 'true', orderBy: 'startTime', maxResults: '50', ...(cursor ? { pageToken: cursor } : {}) });
+        const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+        if(month!=null&&(typeof month!=='string'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)))throw fail(400,'조회할 달을 확인해주세요.');
+        const start=month?month+'-01':today;const end=month?new Date(Date.UTC(Number(month.slice(0,4)),Number(month.slice(5)),1)).toISOString().slice(0,10):new Date(Date.parse(today+'T00:00:00Z')+30*86400000).toISOString().slice(0,10);
+        const query = new URLSearchParams({ timeMin:start+'T00:00:00+09:00',timeMax:end+'T00:00:00+09:00',timeZone:'Asia/Seoul',singleEvents:'true',orderBy:'startTime',maxResults:'50',...(cursor?{pageToken:cursor}:{}) });
         const value = await providerRequest('https://www.googleapis.com/calendar/v3/calendars/primary/events?' + query, { headers });
-        items = (value.items ?? []).filter(item => item.status !== 'cancelled').map(item => ({ id: 'calendar:' + item.id, title: title(item.summary), dueDate: (item.start?.date ?? item.start?.dateTime ?? '').slice(0, 10) || null, kind: 'event' })); nextCursor = value.nextPageToken ?? null;
+        items = (value.items ?? []).filter(item => item.status !== 'cancelled').map(item => ({ id: 'calendar:' + item.id, title: title(item.summary), dueDate: item.start?.date ?? (item.start?.dateTime ? new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(item.start.dateTime)) : null), kind: 'event' })); nextCursor = value.nextPageToken ?? null;
       }
       if (provider === 'google' && feature === 'tasks') {
         if (channel && (typeof channel !== 'string' || channel.length > 1024)) throw fail(400, '목록을 다시 선택해주세요.');
@@ -129,6 +133,36 @@ export function createIntegrations(store, env = process.env, fetcher = fetch) {
       if (feature !== 'channels' && !(feature === 'tasks' && !channel)) store.cacheResources(userId, provider, items);
       return { items, hasMore: !!nextCursor, nextCursor, limit: feature === 'gmail' ? 20 : 50 };
     },
+    async googleTask(userId,todo,desired,guard=()=>true) {
+      const record=await token(userId,'google');
+      if(!record.taskSyncEnabled||!record.features.includes('tasksWrite'))throw fail(403,'완료 동기화를 켜고 Google Tasks 수정 권한을 승인해주세요.');
+      const prefix=(record.connectionId??'legacy')+':tasks:';
+      if(todo.source?.provider!=='google'||!todo.source.externalId.startsWith(prefix))throw fail(409,'가져온 Google 계정이 달라요.');
+      const parts=todo.source.externalId.slice(prefix.length).split(':');
+      if(parts.length!==2||parts.some(value=>!value))throw fail(409,'원본 할 일 식별자를 확인할 수 없어요.');
+      const url='https://www.googleapis.com/tasks/v1/lists/'+encodeURIComponent(parts[0])+'/tasks/'+encodeURIComponent(parts[1]);
+      const headers={Authorization:'Bearer '+record.accessToken};
+      const current=await providerRequest(url,{headers});
+      if(current.deleted)throw fail(409,'Google에서 삭제된 할 일이에요.');
+      const stillConnected=()=>{const latest=store.connection(userId,'google');return latest?.taskSyncEnabled&&latest.connectionId===record.connectionId&&latest.accessToken===record.accessToken;};
+      if(!guard())throw fail(409,'더 최신 변경이 있어 이전 동기화를 멈췄어요.');
+      if(!stillConnected())throw fail(409,'서비스 연결 또는 동기화 설정이 바뀌었어요.');
+      if(desired===undefined||!!(current.status==='completed')===desired)return current;
+      if(!current.etag)throw fail(409,'원본 버전을 확인할 수 없어 자동 수정을 멈췄어요.');
+      let response;
+      try{response=await fetcher(url,{method:'PATCH',headers:{...headers,'Content-Type':'application/json','If-Match':current.etag},body:JSON.stringify({status:desired?'completed':'needsAction',...(desired?{}:{completed:null})}),signal:AbortSignal.timeout(10000)});}catch{throw fail(502,'Google 응답이 늦어요. 다시 시도할게요.');}
+      if(response.status===412)throw fail(409,'원본이 동시에 바뀌었어요. Google 상태를 다시 읽어주세요.');
+      if(!response.ok)throw fail(response.status===401||response.status===403?409:502,'Google 완료 상태를 저장하지 못했어요. 권한과 연결을 확인해주세요.');
+      return await response.json();
+    },
+    async diagnose(userId,provider) {
+      const record=await token(userId,provider);const headers={Authorization:'Bearer '+record.accessToken};
+      if(provider==='google')await providerRequest('https://openidconnect.googleapis.com/v1/userinfo',{headers});
+      if(provider==='slack')await providerRequest('https://slack.com/api/auth.test',{headers},true);
+      if(provider==='notion')await providerRequest('https://api.notion.com/v1/users/me',{headers:{...headers,'Notion-Version':'2025-09-03'}});
+      if(store.connection(userId,provider)?.accessToken!==record.accessToken)throw fail(409,'서비스 연결이 바뀌었어요. 다시 확인해주세요.');
+      return {ok:true,checkedAt:new Date().toISOString()};
+    },
     async searchTasks(userId, query) {
       if (typeof query !== 'string' || !query.trim() || query.length > 120) throw fail(400, '검색어를 120자 이내로 입력해주세요.');
       const normalize = value => value.normalize('NFKC').toLocaleLowerCase('ko-KR');
@@ -153,6 +187,6 @@ export function createIntegrations(store, env = process.env, fetcher = fetch) {
       } catch {} finally { store.removeConnection(userId, provider); }
       return { revoked };
     },
-    async calendar(userId) { const record = store.connection(userId, 'google'); if (!record?.features.includes('calendar')) return []; return (await this.resources(userId, 'google', 'calendar')).items; },
+    async calendar(userId,month,cursor) { const record=store.connection(userId,'google');if(!record?.features.includes('calendar'))return month?{items:[],nextCursor:null}:[];const result=await this.resources(userId,'google','calendar',null,cursor,'incomplete',month);return month?result:result.items; },
   };
 }

@@ -1,3 +1,4 @@
+import { taskSyncStore } from './sync-store.js';
 import { randomInt, randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { secretBox, fail } from './secrets.js';
@@ -30,6 +31,7 @@ export async function featureStore(db, directory, env = process.env) {
     const result = await scrypt(password, row.salt, 64); return timingSafeEqual(result, Buffer.from(row.password_hash, 'hex'));
   }
   return {
+    ...taskSyncStore(db),
     account, findAccountId: findId,
     queueAccountMail(userId, purpose) {
       const user = account(userId); if (!user) return null;
@@ -72,7 +74,7 @@ export async function featureStore(db, directory, env = process.env) {
     consumeOAuthState(provider, state) { return transaction(() => { if (typeof state !== 'string' || state.length > 200) return null; const row = db.prepare('SELECT * FROM oauth_states WHERE hash=? AND provider=?').get(box.hash(state), provider); if (!row) return null; db.prepare('DELETE FROM oauth_states WHERE hash=?').run(row.hash); return row.expires_at > Date.now() ? { userId: row.user_id, ...box.open(row.payload) } : null; }); },
     connection(userId, provider) { const row = db.prepare('SELECT * FROM integrations WHERE user_id=? AND provider=?').get(userId, provider); return row ? { ...box.open(row.payload), label: row.label, updatedAt: row.updated_at } : null; },
     saveConnection(userId, provider, payload, label) { db.prepare('INSERT INTO integrations VALUES (?,?,?,?,?) ON CONFLICT(user_id,provider) DO UPDATE SET payload=excluded.payload,label=excluded.label,updated_at=excluded.updated_at').run(userId, provider, box.seal(payload), label.slice(0, 200), new Date().toISOString()); },
-    removeConnection(userId, provider) { transaction(() => { db.prepare('DELETE FROM integrations WHERE user_id=? AND provider=?').run(userId, provider); db.prepare('DELETE FROM integration_resources WHERE user_id=? AND provider=?').run(userId, provider); db.prepare('DELETE FROM oauth_states WHERE user_id=? AND provider=?').run(userId, provider); }); },
+    removeConnection(userId, provider) { transaction(() => { db.prepare('DELETE FROM integrations WHERE user_id=? AND provider=?').run(userId, provider); if(provider==='google')db.prepare('DELETE FROM task_sync WHERE user_id=?').run(userId); db.prepare('DELETE FROM integration_resources WHERE user_id=? AND provider=?').run(userId, provider); db.prepare('DELETE FROM oauth_states WHERE user_id=? AND provider=?').run(userId, provider); }); },
     clearResourceCache(userId,provider){db.prepare('DELETE FROM integration_resources WHERE user_id=? AND provider=?').run(userId,provider);},
     cacheResources(userId, provider, items) { transaction(() => { for (const item of items) db.prepare('INSERT INTO integration_resources VALUES (?,?,?,?,?) ON CONFLICT(user_id,provider,resource_key) DO UPDATE SET payload=excluded.payload,expires_at=excluded.expires_at').run(userId, provider, item.id, JSON.stringify(item), Date.now() + 10 * 60000); }); },
     importResources(userId, provider, ids) {

@@ -1,0 +1,33 @@
+name: Encrypted remote database backup
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 18 * * *' # 03:30 Asia/Seoul
+permissions:
+  contents: read
+jobs:
+  backup:
+    if: vars.DUCKDUCK_BACKUP_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      STORE_DRIVER: turso
+      TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+      TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+      INTEGRATION_KEY_SEED: ${{ secrets.INTEGRATION_KEY_SEED }}
+      INTEGRATION_TOKEN_KEY: ${{ secrets.INTEGRATION_TOKEN_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --omit=dev --no-audit --no-fund
+      - name: Create authenticated encrypted snapshot
+        run: npm run backup:remote -- --out "$RUNNER_TEMP/duckduck.duckbackup"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: duckduck-encrypted-${{ github.run_id }}
+          path: ${{ runner.temp }}/duckduck.duckbackup
+          retention-days: 7
+          if-no-files-found: error

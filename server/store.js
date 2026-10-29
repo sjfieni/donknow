@@ -53,10 +53,17 @@ export async function openStore(directory, { env = process.env, remoteFactory } 
     logout(token) { if (token) db.prepare('DELETE FROM sessions WHERE token_hash = ?').run(digest(token)); },
     list, get,
     create(userId, draft) { const todo = { ...draft, id: randomUUID(), done: false, createdAt: new Date().toISOString() }; db.prepare('INSERT INTO todos VALUES (?, ?, ?)').run(todo.id, userId, JSON.stringify(todo)); return todo; },
-    update(userId, id, patch) {
+    update(userId, id, patch, { remote = false } = {}) {
       const todo = get(userId, id); if (!todo) return null;
+      const previousDone=todo.done;
       if ('done' in patch) todo.completedAt = patch.done ? (todo.done && todo.completedAt ? todo.completedAt : new Date().toISOString()) : null;
-      Object.assign(todo, patch); db.prepare('UPDATE todos SET data = ? WHERE id = ? AND user_id = ?').run(JSON.stringify(todo), id, userId); return todo;
+      Object.assign(todo, patch);
+      db.exec('BEGIN IMMEDIATE');
+      try {
+        db.prepare('UPDATE todos SET data = ? WHERE id = ? AND user_id = ?').run(JSON.stringify(todo), id, userId);
+        if (!remote && 'done' in patch && todo.source?.provider==='google' && todo.source.externalId.includes(':tasks:') && features.connection(userId,'google')?.taskSyncEnabled) features.queueTaskSync(userId,id,todo.done,previousDone);
+        db.exec('COMMIT');return todo;
+      } catch(error){db.exec('ROLLBACK');throw error;}
     },
     remove(userId, id) { return db.prepare('DELETE FROM todos WHERE id = ? AND user_id = ?').run(id, userId).changes > 0; },
     importLegacy(email, items) {

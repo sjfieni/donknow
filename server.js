@@ -1,3 +1,4 @@
+import { createTaskSync } from './server/task-sync.js';
 import { backupScheduler } from './server/backups.js';
 import { createMailer, startMailWorker } from './server/mail.js';
 import { createIntegrations } from './server/integrations.js';
@@ -17,6 +18,7 @@ const backupJob = backupScheduler(process.env.DATA_DIR || `${root}data`);
 const mailer = createMailer();
 const worker = startMailWorker(store, mailer, process.env.NODE_ENV === 'test' ? 20 : 2000);
 const integrations = createIntegrations(store);
+const taskSync=createTaskSync(store,integrations);
 const features = featureRoutes(store, mailer, worker, integrations, limited, clientAddress);
 const secureCookie = process.env.COOKIE_SECURE === '1' || process.env.NODE_ENV === 'production';
 const allowedOrigin = process.env.PUBLIC_ORIGIN || '';
@@ -70,6 +72,12 @@ const server = http.createServer(async (req, res) => {
       const token = tokenFrom(req), session = store.session(token);
       if (!session) return send(401, { error: '로그인이 필요해요.', code: 'AUTH_REQUIRED' });
       if (path === '/api/operations/backup' && req.method === 'GET') { send(200, backupJob.status); return; }
+      if(path==='/api/integrations/google/task-sync'){
+        if(req.method==='GET')return send(200,taskSync.status(session.user.id));
+        if(req.method==='POST'){const body=await json(req);return send(200,taskSync.configure(session.user.id,body.enabled));}
+      }
+      if(path==='/api/integrations/google/task-sync/pull'&&req.method==='POST'){const body=await json(req);return send(200,await taskSync.pull(session.user.id,body.cursor??''));}
+      if(path==='/api/integrations/google/task-sync/retry'&&req.method==='POST')return send(200,taskSync.retry(session.user.id));
       if (await features.private(req, path, url, session.user, json, send)) return;
       if (path === '/api/auth/session' && req.method === 'GET') return send(200, session);
       if (path === '/api/auth/logout' && req.method === 'POST') { store.logout(token); return send(200, { ok: true }, { 'Set-Cookie': cookie('', 0) }); }
@@ -91,7 +99,7 @@ const server = http.createServer(async (req, res) => {
           if ('reminderAt' in body) { if (!validReminder(body.reminderAt)) return send(400, { error: '알림 시간을 확인해주세요.' }); patch.reminderAt = body.reminderAt; }
           if ('done' in body) { if (typeof body.done !== 'boolean') return send(400, { error: '완료 상태가 올바르지 않아요.' }); patch.done = body.done; }
           if (!Object.keys(patch).length) return send(400, { error: '변경할 내용이 없어요.' });
-          return send(200, store.update(userId, id, patch));
+          const saved=store.update(userId,id,patch);taskSync.wake();return send(200,saved);
         }
       }
       return send(405, { error: '지원하지 않는 요청이에요.' });

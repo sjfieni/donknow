@@ -41,6 +41,7 @@ export function featureRoutes(store, mailer, worker, integrations, limited, clie
         store.cacheResources(user.id, 'apple-reminders', items);
         send(200, { results: store.importResources(user.id, 'apple-reminders', [...new Set(items.map(item => item.id))]) }); return true;
       }
+      if(path==='/api/account/export'&&req.method==='GET'){send(200,{format:'duckduck-personal-v1',exportedAt:new Date().toISOString(),account:store.account(user.id),todos:store.list(user.id)});return true;}
       if (path === '/api/account' && req.method === 'GET') { send(200, { user: store.account(user.id), mailConfigured: mailer.configured, mailStatus: store.mailStatus(user.id) }); return true; }
       if (path === '/api/account/verification/send' && req.method === 'POST') {
         if (store.account(user.id)?.emailVerified) { send(200, { alreadyVerified: true }); return true; }
@@ -57,12 +58,13 @@ export function featureRoutes(store, mailer, worker, integrations, limited, clie
         if (!(await store.deleteAccount(user.id, body.password))) throw fail(400, '현재 비밀번호를 다시 확인해주세요.');
         send(200, { deleted: true, remoteRevocationComplete: revocations.every(result => result.status === 'fulfilled' && result.value.revoked) }); return true;
       }
+      const diagnostic=/^\/api\/integrations\/(google|slack|notion)\/diagnose$/.exec(path);if(diagnostic&&req.method==='POST'){send(200,await integrations.diagnose(user.id,diagnostic[1]));return true;}
       if (path === '/api/integrations' && req.method === 'GET') { send(200, integrations.status(user.id)); return true; }
       if (path === '/api/integrations/google/search' && req.method === 'GET') {
         if (limited('record-search:' + user.id)) throw fail(429, '잠시 후 다시 찾아주세요.');
         send(200, await integrations.searchTasks(user.id, url.searchParams.get('q'))); return true;
       }
-      if (path === '/api/calendar/events' && req.method === 'GET') { send(200, await integrations.calendar(user.id)); return true; }
+      if (path === '/api/calendar/events' && req.method === 'GET') { send(200, await integrations.calendar(user.id,url.searchParams.get('month'),url.searchParams.get('cursor'))); return true; }
       const match = /^\/api\/integrations\/(google|slack|notion)(?:\/(authorize|resources|import))?$/.exec(path); if (!match) return false;
       const [, provider, action] = match;
       if (action === 'authorize' && req.method === 'POST') { const body = await json(req); send(200, integrations.start(user.id, provider, body.features, req.headers['x-duckduck-client'] === 'native')); return true; }

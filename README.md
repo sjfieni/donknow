@@ -76,3 +76,5 @@ GitHub 코드를 Render에서 배포할 수 있도록 `render.yaml`을 추가했
 무료 Render 배포는 `STORE_DRIVER=turso`를 사용합니다. DB 연결 정보와 환경에 보존된 암호화 키가 없으면 시작하지 않으며 로컬 임시 저장소로 대체하지 않습니다. 기존 Docker Compose의 SQLite/영구 볼륨 구성도 유지합니다. 실제 무료 계정 연결은 아직 검증하지 않았습니다.
 
 현재 공개 테스트 주소에서 개인 계정의 이메일 인증과 Google Tasks를 연결하는 순서는 [이메일·Google 연결 안내](docs/connect-google.md)에 정리했습니다. Resend 기본 발신자는 가입자 본인 이메일 테스트에만 사용할 수 있습니다.
+
+완료 상태 동기화·월별 캘린더·연결 점검·개인 데이터 내보내기·원격 암호화 백업은 [연결·운영 안내](docs/remaining-activation.md)를 참고하세요. Google 원본 쓰기와 자동 백업은 기본적으로 켜져 있지 않습니다.

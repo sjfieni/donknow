@@ -15,7 +15,7 @@ try {
     import assert from 'node:assert/strict';import {readFile,access} from 'node:fs/promises';
     const bundle=await readFile(process.env.SSL_CERT_FILE,'utf8');
     assert.ok((bundle.match(/-----BEGIN CERTIFICATE-----/g)??[]).length>100,'Runtime needs native public root certificates for libSQL TLS');
-    await access(process.env.SSL_CERT_DIR);
+    await access(process.env.SSL_CERT_DIR);await access('/app/scripts/remote-backup.js');
   `);
   await inside(`
     import assert from 'node:assert/strict';import http2 from 'node:http2';import {readFile,writeFile,rm} from 'node:fs/promises';import {spawn,execFileSync} from 'node:child_process';

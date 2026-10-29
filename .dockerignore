@@ -20,3 +20,6 @@ mobile/e2e
 mobile/README.md
 mobile/LICENSE
 mobile/.gitignore
+
+**/*.duckbackup
+.github

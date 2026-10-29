@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { dateKey, monthDays } from '../domain';
 import type { Todo } from '../domain';
@@ -10,8 +10,15 @@ export function CalendarScreen({ store, onAdd, onEdit }: { store: TodoStore; onA
   const { height } = useWindowDimensions();
   const rowHeight = Math.max(68, Math.min(115, (height - 300) / 6));
   const [external, setExternal] = useState<{id:string;title:string;dueDate:string|null}[]>([]), [integrationError,setIntegrationError] = useState(''), [importing,setImporting] = useState<string|null>(null);
-  async function loadExternal(){if(!store.user){setExternal([]);return;}try{const value=await store.featureRequest('/api/calendar/events') as typeof external;setExternal(value);setIntegrationError('');}catch(e){setIntegrationError(e instanceof Error?e.message:'Google 일정을 불러오지 못했어요.');}}
-  useEffect(()=>{let active=true;if(store.user)store.featureRequest('/api/calendar/events').then(value=>{if(active)setExternal(value as typeof external);}).catch(e=>{if(active)setIntegrationError(e instanceof Error?e.message:'Google 일정을 불러오지 못했어요.');});return()=>{active=false;};},[]);
+  const requestVersion=useRef(0);const [nextCursor,setNextCursor]=useState<string|null>(null),[loadingExternal,setLoadingExternal]=useState(false);
+  const monthKey=dateKey(month).slice(0,7);
+  async function loadExternal(more=false){
+    const run=++requestVersion.current;if(!store.user){setExternal([]);return;}setLoadingExternal(true);
+    try{const query=new URLSearchParams({month:monthKey,...(more&&nextCursor?{cursor:nextCursor}:{})});const response=await store.featureRequest('/api/calendar/events?'+query) as {items:typeof external;nextCursor:string|null};if(run!==requestVersion.current)return;setExternal(previous=>more?[...new Map([...previous,...response.items].map(item=>[item.id,item])).values()]:response.items);setNextCursor(response.nextCursor);setIntegrationError('');}
+    catch(e){if(run===requestVersion.current)setIntegrationError(e instanceof Error?e.message:'Google 일정을 불러오지 못했어요.');}
+    finally{if(run===requestVersion.current)setLoadingExternal(false);}
+  }
+  useEffect(()=>{setExternal([]);setNextCursor(null);void loadExternal();return()=>{requestVersion.current++;};},[monthKey,store.user?.id]);
   const imported=new Set(store.todos.filter(todo=>todo.source?.provider==='google').map(todo=>todo.source!.externalId));
   const externalOnly=external.filter(event=>!imported.has(event.id));
   const entries=[...store.todos,...externalOnly.map(event=>({...event,done:false}))];
@@ -34,6 +41,7 @@ export function CalendarScreen({ store, onAdd, onEdit }: { store: TodoStore; onA
       {!tasks.length && !externalOnly.some(event=>event.dueDate===selected) && <Text style={styles.empty}>이날은 아직 할 일이 없어요.</Text>}
       {tasks.map(todo => <TodoRow key={todo.id} todo={todo} busy={store.busyIds.includes(todo.id)} onToggle={() => { void store.update(todo.id, { done: !todo.done }); }} onEdit={() => onEdit(todo)} />)}
       {externalOnly.filter(event=>event.dueDate===selected).map(event=><View key={event.id} style={{flexDirection:'row',alignItems:'center',paddingVertical:14,gap:10}}><View style={{flex:1}}><Text style={{color:colors.text,fontSize:14}}>{event.title}</Text><Text style={[styles.more,{marginTop:5}]}>Google 캘린더</Text></View><Pressable accessibilityRole="button" accessibilityLabel={event.title+' 할 일로 추가'} disabled={!!importing} onPress={()=>{void importEvent(event.id);}} style={{padding:10}}><Text style={styles.today}>Todo로 추가</Text></Pressable></View>)}
+      {nextCursor&&<Pressable accessibilityRole="button" disabled={loadingExternal} onPress={()=>{void loadExternal(true);}} style={{paddingVertical:14}}><Text style={styles.today}>이 달의 Google 일정 더 보기</Text></Pressable>}
       {!!integrationError&&<><Text accessibilityRole="alert" style={{color:'#c76a78',fontSize:11,lineHeight:18}}>{integrationError}</Text><Pressable accessibilityRole="button" onPress={()=>{void loadExternal();}} style={{paddingVertical:12}}><Text style={styles.today}>Google 일정 새로고침</Text></Pressable></>}
     </View>
   </ScrollView>;
