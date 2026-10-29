@@ -23,3 +23,6 @@ mobile/.gitignore
 
 **/*.duckbackup
 .github
+
+deliverables
+**/__pycache__
