@@ -37,7 +37,8 @@
     "export:web": "expo export --platform web --output-dir dist-web",
     "test": "node --test src/*.test.ts",
     "test:e2e": "node e2e/app.mjs",
-    "test:web-auth": "node e2e/web-auth.mjs"
+    "test:web-auth": "node e2e/web-auth.mjs",
+    "test:project": "node e2e/project.mjs"
   },
   "private": true
 }

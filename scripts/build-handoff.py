@@ -7,7 +7,7 @@ import base64, hashlib, html, json, re, subprocess, zipfile
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'deliverables'
 OUT.mkdir(exist_ok=True)
-CODE = subprocess.check_output(['git', 'log', '-1', '--format=%H', '--', 'server.js', 'server', 'mobile', 'Dockerfile'], cwd=ROOT, text=True).strip()
+CODE = subprocess.check_output(['git', 'log', '-1', '--format=%H', '--', 'server.js', 'server', 'mobile', 'Dockerfile', 'public/project-comments.js', 'public/project-comments.css'], cwd=ROOT, text=True).strip()
 DATE = datetime.now(ZoneInfo('Asia/Seoul')).strftime('%Y-%m-%d')
 REPO = 'https://github.com/sjfieni/donknow'
 RAW = f'https://raw.githubusercontent.com/sjfieni/donknow/{CODE}/'
@@ -184,7 +184,7 @@ GitHub 자동 백업은 현재 비밀 설정과 활성화가 필요한 준비 �
 
 ## 11. 검증 결과와 재현
 
-이번 기능 보완에서 **테스트 39개 통과**, TypeScript 검사/문법 검사 통과, 실제 Expo 웹 번들의 브라우저 기능 테스트 통과, iOS 번들 생성 통과, 운영 이미지의 네이티브 CA/TLS·로그인 보호·저장·서명 백업/복원·재시작 통과를 확인했습니다. 새 변경 후에는 결과를 재확인합니다.
+이번 기능 보완에서 **테스트 40개 통과**, TypeScript 검사/문법 검사 통과, 실제 Expo 웹 번들의 브라우저 기능 테스트 통과, iOS 번들 생성 통과, 운영 이미지의 네이티브 CA/TLS·로그인 보호·저장·서명 백업/복원·재시작 통과를 확인했습니다. 새 변경 후에는 결과를 재확인합니다.
 
 ```sh
 npm ci
@@ -213,16 +213,17 @@ iOS의 `.hbc` 번들은 IPA/서명된 앱/실기기 테스트가 아닙니다. �
 6. 댓글 답글/알림을 자동으로 보내거나 백그라운드 감시를 하고 있다고 말하지 않는다. 사용자 요청이 있을 때 확인하고 대화로 결과를 보고한다.
 7. AI·아이폰 배포 보류와 무료 우선 조건을 유지한다. 도구/계정/하드웨어로 막힌 항목은 정확하게 밝힌다.
 
-## 13. 댓글로 수정 사항을 남기는 방법
+## 13. 외부 HTML에서 댓글로 수정 요청하기
 
-사용자는 Notion 페이지의 관련 문장/이미지에 댓글을 달고 대화에서 새 댓글이 있다고 알려주면 됩니다. 편하게 적어도 되며 아래 형식은 선택입니다.
+공개 문서 주소는 https://duckduck-test.onrender.com/project 입니다. 배포 후 문서와 이미지 35개를 별도 파일 없이 읽을 수 있습니다. 하단의 댓글 영역에서 덕 계정으로 로그인하고 이메일 인증을 마친 뒤 요청을 남깁니다.
 
-- 화면/기능: 예) Todo 리스트
-- 현재 동작: 예) 날짜가 너무 크게 보임
-- 원하는 변경: 예) 제목 아래 작게
-- 참고 이미지: 해당 이미지에 댓글 또는 캡처
-
-다음 AI는 댓글을 확인할 수 있는 실제 접근 권한이 있어야 합니다. 현재 에이전트에게 개인 Notion을 조회/작성할 도구가 없으므로 댓글 감시·확인·페이지 생성이 이미 된 상태는 아닙니다.
+- 각 절/이미지의 수정 요청 버튼으로 위치를 지정할 수 있습니다.
+- 댓글은 서버 DB에 저장되며 작성자만 수정·삭제·반영 확인할 수 있습니다.
+- 본문과 댓글은 링크를 가진 사람에게 공개됩니다. 이메일·비밀키·개인정보를 적지 않습니다. 표시 이름은 직접 정하며 계정 이메일을 자동 공개하지 않습니다.
+- 댓글을 남긴 뒤 AI에게 페이지 주소와 댓글 위치를 알려주세요. 자동 감시는 하지 않습니다.
+- AI의 네트워크 접근이 막히면 ‘AI에 전달할 댓글 복사’로 열린 요청을 복사해 대화에 붙여넣을 수 있습니다. 50개 이후 요청은 다음 페이지에서 확인합니다.
+- 공개 읽기 API: https://duckduck-test.onrender.com/api/project/comments?status=open
+- Notion 연결/업로드는 이 HTML 사용에 필요하지 않습니다.
 
 ## 14. 변경 이력과 상태 기록
 
@@ -280,7 +281,7 @@ def appendix(path):
         lines.append(line)
     return f'### 原文 / {path}\n\n'+'\n'.join(lines)
 
-documents=['docs/product-direction.md','docs/test-deployment.md','docs/connect-google.md','docs/remaining-activation.md','docs/remote-recovery.md','docs/operations.md','mobile/README.md']
+documents=['docs/product-direction.md','docs/test-deployment.md','docs/connect-google.md','docs/remaining-activation.md','docs/remote-recovery.md','docs/operations.md','docs/public-project.md','mobile/README.md']
 body=body.replace('{{DATE}}',DATE).replace('{{SHORT}}',CODE[:7]).replace('{{COMMIT_LINK}}',REPO+'/tree/'+CODE).replace('{{COUNT}}',str(len(manifest))).replace('{{GALLERY}}','\n'.join(gallery)).replace('{{HISTORY}}','```text\n'+history+'\n```').replace('{{AGENTS}}',(ROOT/'AGENTS.md').read_text()).replace('{{DOCUMENTS}}','\n\n'.join(appendix(Path(path)) for path in documents))
 (ROOT/'docs/notion-handoff.md').write_text(body)
 import_md=body
@@ -319,6 +320,19 @@ for line in inline_md.splitlines():
 if table:html_parts.append('</tbody></table></div>')
 style='body{font-family:system-ui,sans-serif;max-width:1040px;margin:0 auto;padding:38px 22px;color:#263346;line-height:1.8;background:#f7f8fa}h1{font-size:30px}h2{margin-top:54px;border-bottom:1px solid #dbe3ef;padding-bottom:12px}h3{margin-top:32px}p,td{overflow-wrap:anywhere}a{color:#246bd9}blockquote{border-left:4px solid #3182f6;margin:18px 0;padding:12px 18px;background:#edf4ff}code{background:#edf1f7;padding:2px 5px;border-radius:4px;font-size:12px}pre{background:#edf1f7;padding:18px;overflow:auto}pre code{padding:0}figure{margin:24px 0;background:white;border-radius:18px;padding:16px;text-align:center}img{max-width:100%;max-height:880px;object-fit:contain}figcaption{font-size:12px;color:#76879b}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;background:white}td{border:1px solid #dbe3ef;padding:10px;vertical-align:top}tr:first-child{font-weight:600;background:#edf4ff}'
 (OUT/'duckduck-handoff.html').write_text('<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>duckduck 인계 문서</title><style>'+style+'</style><body>'+'\n'.join(html_parts)+'</body></html>')
+# Published HTML uses the same full document, with persistent account-owned feedback.
+project = (OUT/'duckduck-handoff.html').read_text()
+project = project.replace('<title>', '<meta name="robots" content="noindex"><meta name="document-version" content="'+CODE+'"><link rel="stylesheet" href="/project-comments.css"><title>',1)
+project = project.replace('<body>', '<body><nav class="project-nav"><strong>duckduck 개발 문서</strong><a href="/">덕 앱</a><a href="#feedback">댓글·수정 요청</a><button id="feedback-selection" type="button">선택한 문장에 댓글</button></nav>',1)
+feedback = r'''<section id="feedback" class="feedback"><h2>댓글 · 수정 요청</h2><p class="feedback-warning">이 문서와 댓글은 링크를 가진 사람이 볼 수 있어요. 비밀번호·API 키·개인정보는 적지 마세요. 덕 계정으로 로그인하고 이메일 인증을 마치면 작성할 수 있어요.</p><p>문서의 절이나 이미지 옆 수정 요청 버튼으로 위치를 지정하세요. 댓글을 남긴 뒤 AI에게 이 페이지 주소와 댓글 위치를 알려주세요. 자동으로 감시하거나 수정하지는 않습니다.</p>
+<p id="feedback-status" role="status" aria-live="polite"></p>
+<form id="feedback-login"><h3>덕 계정으로 로그인</h3><label>이메일<input id="feedback-email" type="email" required autocomplete="username"></label><label>비밀번호<input id="feedback-password" type="password" required autocomplete="current-password"></label><button id="feedback-signin" type="submit">로그인</button><a href="/">계정 만들기·이메일 인증은 덕 앱에서</a></form>
+<div id="feedback-authenticated" hidden><p>로그인되어 있어요. 내 댓글만 수정·삭제·반영 확인할 수 있어요.</p><button id="feedback-signout" type="button">로그아웃</button></div><p id="feedback-verify" hidden>덕 앱 내정보에서 이메일 인증을 먼저 완료해주세요.</p>
+<form id="feedback-composer" hidden><label>공개 표시 이름<input id="feedback-name" value="작성자" maxlength="40" required></label><label>문서 위치<input id="feedback-section" value="문서 전체" maxlength="160" required></label><label>참고할 문장·이미지<textarea id="feedback-quote" maxlength="500"></textarea></label><label>댓글·원하는 수정 사항<textarea id="feedback-body" maxlength="2000" required placeholder="현재 동작과 원하는 변경을 적어주세요."></textarea></label><button id="feedback-submit" type="submit">댓글 저장</button></form>
+<label>댓글 상태<select id="feedback-filter"><option value="all">전체</option><option value="open">열린 요청</option><option value="resolved">반영 확인</option></select></label><button id="feedback-refresh" type="button">댓글 새로고침</button><button id="feedback-copy" type="button">AI에 전달할 댓글 복사</button><textarea id="feedback-copy-text" aria-label="AI에 전달할 요청" readonly hidden></textarea><p><a href="/api/project/comments?status=open">AI에게 전달할 열린 댓글 목록(JSON)</a></p><div id="feedback-list"></div><button id="feedback-more" type="button" hidden>댓글 더 보기</button></section><script src="/project-comments.js" defer></script>'''
+project = project.replace('실제 Notion에 생성된 페이지가 아니라 <strong>한 페이지 가져오기 원본</strong>입니다.', '외부에서 읽고 댓글로 수정 요청을 남길 수 있는 프로젝트 문서입니다.')
+project = project.replace('</body>',feedback+'</body>')
+(ROOT/'public/project.html').write_text(project)
 (OUT/'IMPORT-README.txt').write_text('개인 Notion의 올바른 계정/워크스페이스에 로그인한 뒤 설정 또는 사이드바의 가져오기 → Markdown & CSV에서 duckduck-notion-import.zip을 선택하세요.\nZIP에는 문서 한 개와 전체 이미지 폴더가 있습니다. 가져온 뒤 이미지 수와 마지막 지침 절이 있는지 확인하세요.\n이 패키지는 아직 실제 Notion 페이지를 만들거나 계정을 조회하지 않았습니다.\nHTML은 전체 이미지가 포함된 오프라인 미리보기입니다.\nsource.zip은 별도의 전체 소스 인계용이며 Notion에 함께 가져오지 않아도 됩니다.\nAPI 키·토큰·DB·node_modules·Git 내부 데이터는 포함하지 않습니다.\n')
 with zipfile.ZipFile(OUT/'duckduck-notion-import.zip') as archive:
     assert len([name for name in archive.namelist() if name.endswith('.md')])==1

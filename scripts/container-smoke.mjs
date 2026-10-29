@@ -43,6 +43,7 @@ try {
     const request=async(path,method='GET',body,token)=>{const response=await fetch(base+path,{method,headers:{'Content-Type':'application/json','X-Duckduck-Client':'native',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:response.status,data:await response.json()};};
     assert.equal((await request('/api/todos')).status,401);
     const page=await(await fetch(base+'/')).text();assert.ok(page.includes('_expo/static/js/web'));const asset=/src="([^"]+\\.js)"/.exec(page)[1];assert.equal((await fetch(base+asset)).status,200);assert.equal((await fetch(base+'/server.js')).status,404);
+    const projectResponse=await fetch(base+'/project');assert.equal(projectResponse.status,200);assert.ok(projectResponse.headers.get('content-security-policy').includes("script-src 'self'"));assert.ok((await projectResponse.text()).includes('feedback-composer'));assert.equal((await fetch(base+'/project-comments.js')).status,200);
     const user=await request('/api/auth/register','POST',{email:'container@example.test',password:'container-fixture-password'});assert.equal(user.status,201);
     assert.equal((await request('/api/todos','POST',{title:'컨테이너 데이터 유지',dueDate:null},user.data.token)).status,201);
     await writeFile('/var/lib/duckduck/.fixture-token',user.data.token,{mode:0o600});

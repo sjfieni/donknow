@@ -1,3 +1,4 @@
+import { commentsStore } from './comments-store.js';
 import { taskSyncStore } from './sync-store.js';
 import { randomInt, randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
@@ -32,6 +33,7 @@ export async function featureStore(db, directory, env = process.env) {
   }
   return {
     ...taskSyncStore(db),
+    ...commentsStore(db),
     account, findAccountId: findId,
     queueAccountMail(userId, purpose) {
       const user = account(userId); if (!user) return null;

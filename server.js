@@ -50,6 +50,11 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost'), path = url.pathname;
     if (await features.callback(req, res, path, url)) return;
+    const projectFiles={'/project':'project.html','/project/':'project.html','/project-comments.js':'project-comments.js','/project-comments.css':'project-comments.css'};
+    if(projectFiles[path]&&req.method==='GET'){
+      const file=projectFiles[path],type=file.endsWith('.js')?'text/javascript; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/html; charset=utf-8';
+      const content=await readFile(root+'public/'+file);res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-cache','Content-Security-Policy':"default-src 'none'; img-src data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'"});res.end(content);return;
+    }
     if (path.startsWith('/api/')) {
       const origin = req.headers.origin;
       const sameOrigin = `${secureCookie ? 'https' : 'http'}://${req.headers.host}`;
@@ -57,6 +62,8 @@ const server = http.createServer(async (req, res) => {
       if (origin && allowedOrigin === origin) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Access-Control-Allow-Credentials', 'true'); res.setHeader('Vary', 'Origin'); }
       if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE', 'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Duckduck-Client' }); return res.end(); }
       if (['POST', 'PATCH', 'DELETE'].includes(req.method) && !['web', 'native'].includes(req.headers['x-duckduck-client'])) return send(403, { error: '앱에서 다시 요청해주세요.' });
+      if(path==='/api/project/comments'&&req.method==='GET'){const viewer=store.session(tokenFrom(req));return send(200,store.listProjectComments(viewer?.user.id,{cursor:url.searchParams.get('cursor')??'',status:url.searchParams.get('status')??'all'}));}
+      const publicComment=/^\/api\/project\/comments\/([a-f0-9-]{36})$/.exec(path);if(publicComment&&req.method==='GET'){const viewer=store.session(tokenFrom(req));return send(200,store.getProjectComment(publicComment[1],viewer?.user.id));}
       if (await features.public(req, path, json, send)) return;
       if (['/api/auth/register', '/api/auth/login'].includes(path) && req.method === 'POST') {
         if (limited(clientAddress(req))) return send(429, { error: '잠시 후 다시 시도해주세요.' });
@@ -71,6 +78,13 @@ const server = http.createServer(async (req, res) => {
       if (path === '/api/health' && req.method === 'GET') return send(200, { ok: true, authentication: 'session', version: 1 });
       const token = tokenFrom(req), session = store.session(token);
       if (!session) return send(401, { error: '로그인이 필요해요.', code: 'AUTH_REQUIRED' });
+      if(path==='/api/project/comments'&&req.method==='POST'){
+        if(!session.user.emailVerified)return send(403,{error:'이메일 인증된 계정으로 댓글을 작성해주세요.'});
+        if(limited('comments:'+session.user.id))return send(429,{error:'댓글 작성이 많아요. 잠시 후 다시 시도해주세요.'});
+        return send(201,store.createProjectComment(session.user.id,await json(req)));
+      }
+      const comment=/^\/api\/project\/comments\/([a-f0-9-]{36})$/.exec(path);
+      if(comment&&['PATCH','DELETE'].includes(req.method))return send(200,store.changeProjectComment(session.user.id,comment[1],await json(req),req.method==='DELETE'));
       if (path === '/api/operations/backup' && req.method === 'GET') { send(200, backupJob.status); return; }
       if(path==='/api/integrations/google/task-sync'){
         if(req.method==='GET')return send(200,taskSync.status(session.user.id));
