@@ -1,5 +1,5 @@
-<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><meta name="document-version" content="23b592d0bd7a42ace3f5ec366e683e2523c799fc"><link rel="stylesheet" href="/project-comments.css"><title>duckduck 인계 문서</title><style>body{font-family:system-ui,sans-serif;max-width:1040px;margin:0 auto;padding:38px 22px;color:#263346;line-height:1.8;background:#f7f8fa}h1{font-size:30px}h2{margin-top:54px;border-bottom:1px solid #dbe3ef;padding-bottom:12px}h3{margin-top:32px}p,td{overflow-wrap:anywhere}a{color:#246bd9}blockquote{border-left:4px solid #3182f6;margin:18px 0;padding:12px 18px;background:#edf4ff}code{background:#edf1f7;padding:2px 5px;border-radius:4px;font-size:12px}pre{background:#edf1f7;padding:18px;overflow:auto}pre code{padding:0}figure{margin:24px 0;background:white;border-radius:18px;padding:16px;text-align:center}img{max-width:100%;max-height:880px;object-fit:contain}figcaption{font-size:12px;color:#76879b}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;background:white}td{border:1px solid #dbe3ef;padding:10px;vertical-align:top}tr:first-child{font-weight:600;background:#edf4ff}</style><body class="project-layout"><aside class="project-toc" aria-label="목차"><details open><summary>목차</summary><nav><details class="toc-group" open><summary>제품과 현재 상태</summary><div class="toc-section"><a href="#section-0">1. 이 프로젝트가 하려는 일</a></div><div class="toc-section"><a href="#section-1">2. 사용자가 정한 IA와 동작</a></div><div class="toc-section"><a href="#section-2">3. 지금 어디까지 되었는가</a></div><div class="toc-section"><a href="#section-3">4. 현재 주소와 관리 위치</a></div></details><details class="toc-group" open><summary>구현과 서비스 연결</summary><div class="toc-section"><a href="#section-4">5. 기술 구조와 중요한 파일</a></div><div class="toc-section"><a href="#section-5">6. 데이터와 보안 원칙</a></div><div class="toc-section"><a href="#section-6">7. 환경 변수 — 이름과 용도만</a></div><div class="toc-section"><a href="#section-7">8. 연결과 동기화의 실제 범위</a></div></details><details class="toc-group" open><summary>운영과 검증</summary><div class="toc-section"><a href="#section-8">9. 무료 운영·백업·복구</a></div><div class="toc-section"><a href="#section-9">10. 배포 오류와 해결 기록</a></div><div class="toc-section"><a href="#section-10">11. 검증 결과와 재현</a></div></details><details class="toc-group" open><summary>협업과 수정 요청</summary><div class="toc-section"><a href="#section-11">12. 다음 AI가 바로 할 일</a></div><div class="toc-section"><a href="#section-12">13. 외부 HTML에서 댓글로 수정 요청하기</a></div><div class="toc-section"><a href="#section-13">14. 변경 이력과 상태 기록</a></div></details><details class="toc-group" open><summary>이미지와 소스</summary><details class="toc-section"><summary><a href="#section-14">15. 모든 이미지 — 35개</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#subsection-0">artifacts/calendar.png</a><a class="toc-small toc-depth-3" href="#subsection-1">artifacts/duckduck.png</a><a class="toc-small toc-depth-3" href="#subsection-2">artifacts/features-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-3">artifacts/log.png</a><a class="toc-small toc-depth-3" href="#subsection-4">artifacts/mobile-account-settings.png</a><a class="toc-small toc-depth-3" href="#subsection-5">artifacts/mobile-apple-reminders.png</a><a class="toc-small toc-depth-3" href="#subsection-6">artifacts/mobile-auth.png</a><a class="toc-small toc-depth-3" href="#subsection-7">artifacts/mobile-calendar.png</a><a class="toc-small toc-depth-3" href="#subsection-8">artifacts/mobile-completed-reference-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-9">artifacts/mobile-duck-draft.png</a><a class="toc-small toc-depth-3" href="#subsection-10">artifacts/mobile-duckduck.png</a><a class="toc-small toc-depth-3" href="#subsection-11">artifacts/mobile-external-search-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-12">artifacts/mobile-google-tasks-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-13">artifacts/mobile-kakao-paste.png</a><a class="toc-small toc-depth-3" href="#subsection-14">artifacts/mobile-kakao-share.png</a><a class="toc-small toc-depth-3" href="#subsection-15">artifacts/mobile-log.png</a><a class="toc-small toc-depth-3" href="#subsection-16">artifacts/mobile-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-17">artifacts/mobile-personal-export.png</a><a class="toc-small toc-depth-3" href="#subsection-18">artifacts/mobile-profile.png</a><a class="toc-small toc-depth-3" href="#subsection-19">artifacts/mobile-record-search.png</a><a class="toc-small toc-depth-3" href="#subsection-20">artifacts/mobile-reminder.png</a><a class="toc-small toc-depth-3" href="#subsection-21">artifacts/mobile-services.png</a><a class="toc-small toc-depth-3" href="#subsection-22">artifacts/mobile-task-sync-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-23">artifacts/mobile-todos.png</a><a class="toc-small toc-depth-3" href="#subsection-24">artifacts/mobile-verification.png</a><a class="toc-small toc-depth-3" href="#subsection-25">artifacts/overview.png</a><a class="toc-small toc-depth-3" href="#subsection-26">artifacts/polish-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-27">artifacts/profile.png</a><a class="toc-small toc-depth-3" href="#subsection-28">artifacts/todos.png</a><a class="toc-small toc-depth-3" href="#subsection-29">mobile/assets/android-icon-background.png</a><a class="toc-small toc-depth-3" href="#subsection-30">mobile/assets/android-icon-foreground.png</a><a class="toc-small toc-depth-3" href="#subsection-31">mobile/assets/android-icon-monochrome.png</a><a class="toc-small toc-depth-3" href="#subsection-32">mobile/assets/favicon.png</a><a class="toc-small toc-depth-3" href="#subsection-33">mobile/assets/icon.png</a><a class="toc-small toc-depth-3" href="#subsection-34">mobile/assets/splash-icon.png</a></div></details><div class="toc-section"><a href="#section-15">16. 정적 미리보기와 소스</a></div></details><details class="toc-group" open><summary>AI 지침과 참고 문서</summary><details class="toc-section"><summary><a href="#section-16">17. 실행 가능한 AI 지침 전문</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#section-17">먼저 읽을 것</a><a class="toc-small toc-depth-3" href="#section-18">사용자 의도와 제품</a><a class="toc-small toc-depth-3" href="#section-19">데이터·외부 변경</a><a class="toc-small toc-depth-3" href="#section-20">무료 운영과 비밀값</a><a class="toc-small toc-depth-3" href="#section-21">작업과 검증</a><a class="toc-small toc-depth-3" href="#section-22">이미지·문서·다른 AI로 인계</a></div></details><details class="toc-section"><summary><a href="#section-23">18. 운영·기획·연결 문서 전문</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#subsection-35">原文 / docs/product-direction.md</a><a class="toc-small toc-depth-3" href="#subsection-36">duckduck 제품 방향과 IA</a><a class="toc-small toc-depth-4" href="#subsection-37">확정된 방향</a><a class="toc-small toc-depth-4" href="#subsection-38">하단 내비게이션</a><a class="toc-small toc-depth-4" href="#subsection-39">계정과 데이터</a><a class="toc-small toc-depth-4" href="#subsection-40">서비스 연결</a><a class="toc-small toc-depth-4" href="#subsection-41">알림</a><a class="toc-small toc-depth-4" href="#subsection-42">개발·운영</a><a class="toc-small toc-depth-3" href="#subsection-43">原文 / docs/test-deployment.md</a><a class="toc-small toc-depth-3" href="#subsection-44">무료 테스트 서버 열기</a><a class="toc-small toc-depth-4" href="#subsection-45">1. Turso에 무료 DB 만들기</a><a class="toc-small toc-depth-4" href="#subsection-46">2. Render에 연결하기</a><a class="toc-small toc-depth-4" href="#subsection-47">저장과 무료 제한</a><a class="toc-small toc-depth-4" href="#subsection-48">확인할 기능</a><a class="toc-small toc-depth-4" href="#subsection-49">시작 명령 오류가 발생한 경우</a><a class="toc-small toc-depth-4" href="#subsection-50">네이티브 TLS 인증서 오류</a><a class="toc-small toc-depth-3" href="#subsection-51">原文 / docs/connect-google.md</a><a class="toc-small toc-depth-3" href="#subsection-52">현재 테스트 서버에서 이메일 인증과 Google Tasks 연결하기</a><a class="toc-small toc-depth-4" href="#subsection-53">1. 내 계정 이메일 인증 준비</a><a class="toc-small toc-depth-4" href="#subsection-54">2. Google Tasks 앱 등록</a><a class="toc-small toc-depth-4" href="#subsection-55">3. 실제 연결 확인</a><a class="toc-small toc-depth-4" href="#subsection-56">문제가 생기면</a><a class="toc-small toc-depth-3" href="#subsection-57">原文 / docs/remaining-activation.md</a><a class="toc-small toc-depth-3" href="#subsection-58">남은 연결 활성화와 운영 확인</a><a class="toc-small toc-depth-4" href="#subsection-59">확인 상태</a><a class="toc-small toc-depth-4" href="#subsection-60">1. Google의 다른 기능</a><a class="toc-small toc-depth-4" href="#subsection-61">2. Google Tasks 완료 동기화</a><a class="toc-small toc-depth-4" href="#subsection-62">3. Slack</a><a class="toc-small toc-depth-4" href="#subsection-63">4. Notion (제품 안의 읽기 연결)</a><a class="toc-small toc-depth-4" href="#subsection-64">5. 아이폰 기기 확인</a><a class="toc-small toc-depth-4" href="#subsection-65">6. 본인 데이터 내보내기</a><a class="toc-small toc-depth-4" href="#subsection-66">7. 원격 DB 백업·복구</a><a class="toc-small toc-depth-3" href="#subsection-67">原文 / docs/remote-recovery.md</a><a class="toc-small toc-depth-3" href="#subsection-68">Turso 원격 백업과 복구</a><a class="toc-small toc-depth-4" href="#subsection-69">수동 백업</a><a class="toc-small toc-depth-4" href="#subsection-70">GitHub에서 자동 실행</a><a class="toc-small toc-depth-4" href="#subsection-71">새 DB로 복원</a><a class="toc-small toc-depth-3" href="#subsection-72">原文 / docs/operations.md</a><a class="toc-small toc-depth-3" href="#subsection-73">운영 준비 및 외부 서비스 활성화</a><a class="toc-small toc-depth-4" href="#subsection-74">기본 무료 배포</a><a class="toc-small toc-depth-4" href="#subsection-75">현재 동작과 검증 범위</a><a class="toc-small toc-depth-4" href="#subsection-76">서버와 도메인</a><a class="toc-small toc-depth-4" href="#subsection-77">백업과 복원</a><a class="toc-small toc-depth-4" href="#subsection-78">이메일</a><a class="toc-small toc-depth-4" href="#subsection-79">OAuth 공통</a><a class="toc-small toc-depth-4" href="#subsection-80">알림</a><a class="toc-small toc-depth-4" href="#subsection-81">계정 삭제와 운영 데이터</a><a class="toc-small toc-depth-4" href="#subsection-82">검증 명령</a><a class="toc-small toc-depth-4" href="#subsection-83">2026-10-29 운영 보완</a><a class="toc-small toc-depth-3" href="#subsection-84">原文 / docs/public-project.md</a><a class="toc-small toc-depth-3" href="#subsection-85">공개 프로젝트 문서와 댓글</a><a class="toc-small toc-depth-4" href="#subsection-86">사용</a><a class="toc-small toc-depth-4" href="#subsection-87">API와 검증</a><a class="toc-small toc-depth-3" href="#subsection-88">原文 / mobile/README.md</a><a class="toc-small toc-depth-3" href="#subsection-89">duckduck iPhone 앱</a><a class="toc-small toc-depth-4" href="#subsection-90">개발 환경</a><a class="toc-small toc-depth-4" href="#subsection-91">저장 모드</a><a class="toc-small toc-depth-4" href="#subsection-92">검증</a><a class="toc-small toc-depth-4" href="#subsection-93">제한된 클라우드에서 실행</a><a class="toc-small toc-depth-4" href="#subsection-94">로그인 화면과 저장</a><a class="toc-small toc-depth-4" href="#subsection-95">알림·외부 서비스·계정 관리</a></div></details></details><a href="#feedback">댓글 · 수정 요청</a></nav></details></aside><main class="project-content"><nav class="project-nav"><strong>duckduck 개발 문서</strong><a href="/">덕 앱</a><a href="#feedback">댓글·수정 요청</a><button id="feedback-selection" type="button">선택한 문장에 댓글</button></nav><h1>duckduck — 제품·구현·운영·이미지·AI 인계 문서</h1>
-<blockquote>기준: 2026-10-29 · 한국 시간 · 기능 코드 23b592d · 문서와 GitHub 소스가 이어받기의 기준입니다.</blockquote>
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><meta name="document-version" content="e80a08ee2e9dcb0d4f69021035b0a323e75defb9"><link rel="stylesheet" href="/project-comments.css"><title>duckduck 인계 문서</title><style>body{font-family:system-ui,sans-serif;max-width:1040px;margin:0 auto;padding:38px 22px;color:#263346;line-height:1.8;background:#f7f8fa}h1{font-size:30px}h2{margin-top:54px;border-bottom:1px solid #dbe3ef;padding-bottom:12px}h3{margin-top:32px}p,td{overflow-wrap:anywhere}a{color:#246bd9}blockquote{border-left:4px solid #3182f6;margin:18px 0;padding:12px 18px;background:#edf4ff}code{background:#edf1f7;padding:2px 5px;border-radius:4px;font-size:12px}pre{background:#edf1f7;padding:18px;overflow:auto}pre code{padding:0}figure{margin:24px 0;background:white;border-radius:18px;padding:16px;text-align:center}img{max-width:100%;max-height:880px;object-fit:contain}figcaption{font-size:12px;color:#76879b}.table{overflow-x:auto}table{border-collapse:collapse;width:100%;background:white}td{border:1px solid #dbe3ef;padding:10px;vertical-align:top}tr:first-child{font-weight:600;background:#edf4ff}</style><body class="project-layout"><aside class="project-toc" aria-label="목차"><details open><summary>목차</summary><nav><details class="toc-group" open><summary>제품과 현재 상태</summary><div class="toc-section"><a href="#section-0">1. 이 프로젝트가 하려는 일</a></div><div class="toc-section"><a href="#section-1">2. 사용자가 정한 IA와 동작</a></div><div class="toc-section"><a href="#section-2">3. 지금 어디까지 되었는가</a></div><div class="toc-section"><a href="#section-3">4. 현재 주소와 관리 위치</a></div></details><details class="toc-group" open><summary>구현과 서비스 연결</summary><div class="toc-section"><a href="#section-4">5. 기술 구조와 중요한 파일</a></div><div class="toc-section"><a href="#section-5">6. 데이터와 보안 원칙</a></div><div class="toc-section"><a href="#section-6">7. 환경 변수 — 이름과 용도만</a></div><div class="toc-section"><a href="#section-7">8. 연결과 동기화의 실제 범위</a></div></details><details class="toc-group" open><summary>운영과 검증</summary><div class="toc-section"><a href="#section-8">9. 무료 운영·백업·복구</a></div><div class="toc-section"><a href="#section-9">10. 배포 오류와 해결 기록</a></div><div class="toc-section"><a href="#section-10">11. 검증 결과와 재현</a></div></details><details class="toc-group" open><summary>협업과 수정 요청</summary><div class="toc-section"><a href="#section-11">12. 다음 AI가 바로 할 일</a></div><div class="toc-section"><a href="#section-12">13. 외부 HTML에서 댓글로 수정 요청하기</a></div><div class="toc-section"><a href="#section-13">14. 변경 이력과 상태 기록</a></div></details><details class="toc-group" open><summary>이미지와 소스</summary><details class="toc-section"><summary><a href="#section-14">15. 모든 이미지 — 35개</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#subsection-0">artifacts/calendar.png</a><a class="toc-small toc-depth-3" href="#subsection-1">artifacts/duckduck.png</a><a class="toc-small toc-depth-3" href="#subsection-2">artifacts/features-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-3">artifacts/log.png</a><a class="toc-small toc-depth-3" href="#subsection-4">artifacts/mobile-account-settings.png</a><a class="toc-small toc-depth-3" href="#subsection-5">artifacts/mobile-apple-reminders.png</a><a class="toc-small toc-depth-3" href="#subsection-6">artifacts/mobile-auth.png</a><a class="toc-small toc-depth-3" href="#subsection-7">artifacts/mobile-calendar.png</a><a class="toc-small toc-depth-3" href="#subsection-8">artifacts/mobile-completed-reference-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-9">artifacts/mobile-duck-draft.png</a><a class="toc-small toc-depth-3" href="#subsection-10">artifacts/mobile-duckduck.png</a><a class="toc-small toc-depth-3" href="#subsection-11">artifacts/mobile-external-search-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-12">artifacts/mobile-google-tasks-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-13">artifacts/mobile-kakao-paste.png</a><a class="toc-small toc-depth-3" href="#subsection-14">artifacts/mobile-kakao-share.png</a><a class="toc-small toc-depth-3" href="#subsection-15">artifacts/mobile-log.png</a><a class="toc-small toc-depth-3" href="#subsection-16">artifacts/mobile-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-17">artifacts/mobile-personal-export.png</a><a class="toc-small toc-depth-3" href="#subsection-18">artifacts/mobile-profile.png</a><a class="toc-small toc-depth-3" href="#subsection-19">artifacts/mobile-record-search.png</a><a class="toc-small toc-depth-3" href="#subsection-20">artifacts/mobile-reminder.png</a><a class="toc-small toc-depth-3" href="#subsection-21">artifacts/mobile-services.png</a><a class="toc-small toc-depth-3" href="#subsection-22">artifacts/mobile-task-sync-fixture.png</a><a class="toc-small toc-depth-3" href="#subsection-23">artifacts/mobile-todos.png</a><a class="toc-small toc-depth-3" href="#subsection-24">artifacts/mobile-verification.png</a><a class="toc-small toc-depth-3" href="#subsection-25">artifacts/overview.png</a><a class="toc-small toc-depth-3" href="#subsection-26">artifacts/polish-overview.png</a><a class="toc-small toc-depth-3" href="#subsection-27">artifacts/profile.png</a><a class="toc-small toc-depth-3" href="#subsection-28">artifacts/todos.png</a><a class="toc-small toc-depth-3" href="#subsection-29">mobile/assets/android-icon-background.png</a><a class="toc-small toc-depth-3" href="#subsection-30">mobile/assets/android-icon-foreground.png</a><a class="toc-small toc-depth-3" href="#subsection-31">mobile/assets/android-icon-monochrome.png</a><a class="toc-small toc-depth-3" href="#subsection-32">mobile/assets/favicon.png</a><a class="toc-small toc-depth-3" href="#subsection-33">mobile/assets/icon.png</a><a class="toc-small toc-depth-3" href="#subsection-34">mobile/assets/splash-icon.png</a></div></details><div class="toc-section"><a href="#section-15">16. 정적 미리보기와 소스</a></div></details><details class="toc-group" open><summary>AI 지침과 참고 문서</summary><details class="toc-section"><summary><a href="#section-16">17. 실행 가능한 AI 지침 전문</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#section-17">먼저 읽을 것</a><a class="toc-small toc-depth-3" href="#section-18">사용자 의도와 제품</a><a class="toc-small toc-depth-3" href="#section-19">데이터·외부 변경</a><a class="toc-small toc-depth-3" href="#section-20">무료 운영과 비밀값</a><a class="toc-small toc-depth-3" href="#section-21">작업과 검증</a><a class="toc-small toc-depth-3" href="#section-22">이미지·문서·다른 AI로 인계</a></div></details><details class="toc-section"><summary><a href="#section-23">18. 운영·기획·연결 문서 전문</a></summary><div class="toc-children"><a class="toc-small toc-depth-3" href="#subsection-35">原文 / docs/product-direction.md</a><a class="toc-small toc-depth-3" href="#subsection-36">duckduck 제품 방향과 IA</a><a class="toc-small toc-depth-4" href="#subsection-37">확정된 방향</a><a class="toc-small toc-depth-4" href="#subsection-38">하단 내비게이션</a><a class="toc-small toc-depth-4" href="#subsection-39">계정과 데이터</a><a class="toc-small toc-depth-4" href="#subsection-40">서비스 연결</a><a class="toc-small toc-depth-4" href="#subsection-41">알림</a><a class="toc-small toc-depth-4" href="#subsection-42">개발·운영</a><a class="toc-small toc-depth-4" href="#subsection-43">백로그 — 붙여넣은 내용에서 할 일 추출</a><a class="toc-small toc-depth-3" href="#subsection-44">原文 / docs/test-deployment.md</a><a class="toc-small toc-depth-3" href="#subsection-45">무료 테스트 서버 열기</a><a class="toc-small toc-depth-4" href="#subsection-46">1. Turso에 무료 DB 만들기</a><a class="toc-small toc-depth-4" href="#subsection-47">2. Render에 연결하기</a><a class="toc-small toc-depth-4" href="#subsection-48">저장과 무료 제한</a><a class="toc-small toc-depth-4" href="#subsection-49">확인할 기능</a><a class="toc-small toc-depth-4" href="#subsection-50">시작 명령 오류가 발생한 경우</a><a class="toc-small toc-depth-4" href="#subsection-51">네이티브 TLS 인증서 오류</a><a class="toc-small toc-depth-3" href="#subsection-52">原文 / docs/connect-google.md</a><a class="toc-small toc-depth-3" href="#subsection-53">현재 테스트 서버에서 이메일 인증과 Google Tasks 연결하기</a><a class="toc-small toc-depth-4" href="#subsection-54">1. 내 계정 이메일 인증 준비</a><a class="toc-small toc-depth-4" href="#subsection-55">2. Google Tasks 앱 등록</a><a class="toc-small toc-depth-4" href="#subsection-56">3. 실제 연결 확인</a><a class="toc-small toc-depth-4" href="#subsection-57">문제가 생기면</a><a class="toc-small toc-depth-3" href="#subsection-58">原文 / docs/remaining-activation.md</a><a class="toc-small toc-depth-3" href="#subsection-59">남은 연결 활성화와 운영 확인</a><a class="toc-small toc-depth-4" href="#subsection-60">확인 상태</a><a class="toc-small toc-depth-4" href="#subsection-61">1. Google의 다른 기능</a><a class="toc-small toc-depth-4" href="#subsection-62">2. Google Tasks 완료 동기화</a><a class="toc-small toc-depth-4" href="#subsection-63">3. Slack</a><a class="toc-small toc-depth-4" href="#subsection-64">4. Notion (제품 안의 읽기 연결)</a><a class="toc-small toc-depth-4" href="#subsection-65">5. 아이폰 기기 확인</a><a class="toc-small toc-depth-4" href="#subsection-66">6. 본인 데이터 내보내기</a><a class="toc-small toc-depth-4" href="#subsection-67">7. 원격 DB 백업·복구</a><a class="toc-small toc-depth-3" href="#subsection-68">原文 / docs/remote-recovery.md</a><a class="toc-small toc-depth-3" href="#subsection-69">Turso 원격 백업과 복구</a><a class="toc-small toc-depth-4" href="#subsection-70">수동 백업</a><a class="toc-small toc-depth-4" href="#subsection-71">GitHub에서 자동 실행</a><a class="toc-small toc-depth-4" href="#subsection-72">새 DB로 복원</a><a class="toc-small toc-depth-3" href="#subsection-73">原文 / docs/operations.md</a><a class="toc-small toc-depth-3" href="#subsection-74">운영 준비 및 외부 서비스 활성화</a><a class="toc-small toc-depth-4" href="#subsection-75">기본 무료 배포</a><a class="toc-small toc-depth-4" href="#subsection-76">현재 동작과 검증 범위</a><a class="toc-small toc-depth-4" href="#subsection-77">서버와 도메인</a><a class="toc-small toc-depth-4" href="#subsection-78">백업과 복원</a><a class="toc-small toc-depth-4" href="#subsection-79">이메일</a><a class="toc-small toc-depth-4" href="#subsection-80">OAuth 공통</a><a class="toc-small toc-depth-4" href="#subsection-81">알림</a><a class="toc-small toc-depth-4" href="#subsection-82">계정 삭제와 운영 데이터</a><a class="toc-small toc-depth-4" href="#subsection-83">검증 명령</a><a class="toc-small toc-depth-4" href="#subsection-84">2026-10-29 운영 보완</a><a class="toc-small toc-depth-3" href="#subsection-85">原文 / docs/public-project.md</a><a class="toc-small toc-depth-3" href="#subsection-86">공개 프로젝트 문서와 댓글</a><a class="toc-small toc-depth-4" href="#subsection-87">사용</a><a class="toc-small toc-depth-4" href="#subsection-88">API와 검증</a><a class="toc-small toc-depth-3" href="#subsection-89">原文 / mobile/README.md</a><a class="toc-small toc-depth-3" href="#subsection-90">duckduck iPhone 앱</a><a class="toc-small toc-depth-4" href="#subsection-91">개발 환경</a><a class="toc-small toc-depth-4" href="#subsection-92">저장 모드</a><a class="toc-small toc-depth-4" href="#subsection-93">검증</a><a class="toc-small toc-depth-4" href="#subsection-94">제한된 클라우드에서 실행</a><a class="toc-small toc-depth-4" href="#subsection-95">로그인 화면과 저장</a><a class="toc-small toc-depth-4" href="#subsection-96">알림·외부 서비스·계정 관리</a></div></details></details><a href="#feedback">댓글 · 수정 요청</a></nav></details></aside><main class="project-content"><nav class="project-nav"><strong>duckduck 개발 문서</strong><a href="/">덕 앱</a><a href="#feedback">댓글·수정 요청</a><button id="feedback-selection" type="button">선택한 문장에 댓글</button></nav><h1>duckduck — 제품·구현·운영·이미지·AI 인계 문서</h1>
+<blockquote>기준: 2026-10-29 · 한국 시간 · 기능 코드 e80a08e · 문서와 GitHub 소스가 이어받기의 기준입니다.</blockquote>
 <blockquote>외부에서 읽고 댓글로 수정 요청을 남길 수 있는 프로젝트 문서입니다. 아래 상태 표에서 구현/자동 테스트/실사용 확인을 구분합니다.</blockquote>
 <h2 id="section-0">1. 이 프로젝트가 하려는 일</h2>
 <p>서비스 이름은 <strong>duckduck</strong>, 편하게 <strong>덕</strong>이라고 부릅니다. 처음에는 dot이라는 이름과 현재 ChatGPT 안에서 쓰는 dot의 느낌을 이야기했지만, 최종 이름을 duckduck으로 바꿨습니다. 기존 개인 설정을 복사하는 일이 아니라 대화에서 할 일을 정리하고 실행으로 이어주는 개인 비서를 만드는 일입니다.</p>
@@ -39,7 +39,7 @@
 <p>- 서버 상태: https://duckduck-test.onrender.com/api/health</p>
 <p>- 코드: https://github.com/sjfieni/donknow</p>
 <p>- 전체 소스 다운로드: https://github.com/sjfieni/donknow/archive/refs/heads/main.zip</p>
-<p>- 기능 기준 커밋: https://github.com/sjfieni/donknow/tree/23b592d0bd7a42ace3f5ec366e683e2523c799fc</p>
+<p>- 기능 기준 커밋: https://github.com/sjfieni/donknow/tree/e80a08ee2e9dcb0d4f69021035b0a323e75defb9</p>
 <p>- Render 서비스: https://dashboard.render.com/web/srv-dbgpc0ff3r2c73abc7e0</p>
 <p>- Render 환경: https://dashboard.render.com/web/srv-dbgpc0ff3r2c73abc7e0/env</p>
 <p>- Render Blueprint: https://dashboard.render.com/blueprint/exs-dbgorbjbc2fs73b9o2b0</p>
@@ -172,9 +172,10 @@ e45632a Add opt-in task sync, cloud recovery and remaining service tooling
 9ee398a Publish full project HTML with persistent authenticated feedback
 a130c93 Refresh published document snapshot and feedback instructions
 be39c5d Speed up public project document with lazy cached images and linked contents
-23b592d Reserve a dedicated navigation column in public project layout</code></pre>
+23b592d Reserve a dedicated navigation column in public project layout
+e80a08e Organize project contents into grouped expandable heading hierarchy</code></pre>
 <p>- 새 범위의 실제 외부 연결·아이폰 기기 확인: 아직 완료로 표시하지 않음.</p>
-<p>- 이번 확장 코드: 23b592d에 저장. 실제 Render 반영은 수동 배포/Live 확인 필요.</p>
+<p>- 이번 확장 코드: e80a08e에 저장. 실제 Render 반영은 수동 배포/Live 확인 필요.</p>
 <p>- 새 수정은 이 절에 날짜, 요청, 결정, 관련 커밋, 테스트, 실제 배포 확인을 이어서 기록한다.</p>
 <h2 id="section-14">15. 모든 이미지 — 35개</h2>
 <p>아래는 현재 저장소에서 생성·보관한 이미지와 앱 리소스 <strong>전체</strong>입니다. 파일별 SHA-256과 크기는 <code>docs/asset-manifest.json</code>에도 있습니다. 테스트 화면은 실제 사용자 자료가 아니라 격리된 계정/예시 데이터입니다. 오래된 웹 프로토타입과 현재 모바일 기반 화면을 구분합니다.</p>
@@ -409,15 +410,23 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>Render Free와 별도의 Turso 무료 DB를 사용한다. 무료 서버의 임시 파일 삭제와 계정·할 일 보존을 분리하며 유료 디스크를 만들지 않는다. 환경에 보관한 암호화 시드를 재사용하고, DB/키 설정이 빠졌을 때 임시 로컬 저장소로 대체하지 않는다. 무료 한도·대기 후 접속 지연·별도 백업 필요를 운영 안내에 표시한다. 실제 외부 계정과 공개 서버 배포는 아직 검증하지 않았다.</p>
 <h5>2026-10-29 기능 보완</h5>
 <p>Google Tasks 완료 상태 동기화(기본 꺼짐, 쓰기 권한·별도 선택 필요), 영속 전송 대기열·ETag 충돌 처리·원본 상태 읽기, 조회 월에 맞춘 한국 날짜의 캘린더, 서비스 연결 점검, 개인 JSON 내보내기, 아이폰 미리 알림 수동 상태 맞추기를 추가했다. 원격 DB 암호화 백업과 빈 DB 복원, GitHub Actions 선택 활성화 구성도 추가했다. 실제 계정·기기 검증 상태와 활성화 방법은 <a href="https://github.com/sjfieni/donknow/blob/main/docs/remaining-activation.md">남은 연결·운영 안내</a>를 기준으로 한다.</p>
-<h3 id="subsection-43">原文 / docs/test-deployment.md</h3>
-<h3 id="subsection-44">무료 테스트 서버 열기</h3>
+<h4 id="subsection-43">백로그 — 붙여넣은 내용에서 할 일 추출</h4>
+<p>- <strong>등록일:</strong> 2026-10-29</p>
+<p>- <strong>상태:</strong> 백로그 / 구현 보류</p>
+<p>- <strong>사용자 요청:</strong> 어떤 서비스의 내용이든 복사해서 덕에 붙여넣으면 할 일을 파악해 Todo로 넣을 수 있게 한다. Notion·Slack 등의 연결 설정 없이도 사용할 수 있는 입력 경로다.</p>
+<p>- <strong>예정 흐름:</strong> 내용 붙여넣기 → 실행할 일을 개별 초안으로 추출 → 사용자가 제목·날짜를 확인하고 수정·선택 → 선택한 항목을 Todo에 추가.</p>
+<p>- <strong>판단 기준:</strong> 대화·메일·회의록·문서 등 복사 가능한 텍스트를 대상으로 한다. 할 일이 없으면 없다고 안내하고, 여러 일이면 나누며, 불명확한 날짜는 임의로 확정하지 않는다. 같은 초안을 반복 추가하지 않도록 한다.</p>
+<p>- <strong>현재와의 차이:</strong> 기존 카카오톡 대화 붙여넣기는 사용자가 할 일을 직접 정리한다. 이 백로그는 범용 붙여넣기와 자동 추출로 확장하는 별도 후속 작업이다. 이미지·파일·URL 내용 수집 범위는 구현 전에 정한다.</p>
+<p>- <strong>미정:</strong> 추출 모델·비용, 입력 길이, 원문 보관·외부 전송 안내. AI 연결 보류는 유지하며 이번 요청으로 API를 연결하거나 자동 추출을 구현하지 않는다.</p>
+<h3 id="subsection-44">原文 / docs/test-deployment.md</h3>
+<h3 id="subsection-45">무료 테스트 서버 열기</h3>
 <p>기본 배포는 <strong>Render Free 서버 + Turso 무료 DB</strong> 구성입니다. 별도 도메인이나 유료 디스크를 요구하지 않습니다. 각 서비스의 무료 한도 안에서 사용하는 테스트용 구성입니다. 가입/배포 화면에서 Free를 선택하고, 유료 플랜·카드 등록·자동 유료 업그레이드를 선택하지 마세요. 서비스의 현재 무료 제공 조건은 가입 화면에서 확인합니다.</p>
 <p>코드: https://github.com/sjfieni/donknow</p>
-<h4 id="subsection-45">1. Turso에 무료 DB 만들기</h4>
+<h4 id="subsection-46">1. Turso에 무료 DB 만들기</h4>
 <p>1. <a href="https://turso.tech">Turso</a>에 로그인하고 무료 플랜에서 데이터베이스를 만듭니다.</p>
 <p>2. DB의 연결 화면에서 <strong>Database URL</strong> (<code>libsql://…</code>)과 <strong>Auth Token</strong>을 확인합니다.</p>
 <p>3. 두 값은 아래 Render 환경 설정에만 입력합니다. 토큰을 GitHub나 채팅에 붙여넣지 않습니다.</p>
-<h4 id="subsection-46">2. Render에 연결하기</h4>
+<h4 id="subsection-47">2. Render에 연결하기</h4>
 <p><a href="https://render.com/deploy?repo=https://github.com/sjfieni/donknow">무료 배포 설정 열기</a></p>
 <p>1. Render에 로그인하고 GitHub의 <code>sjfieni/donknow</code> 저장소 접근을 허용합니다.</p>
 <p>2. <code>main</code> 브랜치의 최신 <code>render.yaml</code>을 사용합니다. 서버 플랜이 <strong>Free</strong>, 영구 디스크가 <strong>없음</strong>인지 확인합니다. Starter나 디스크 요금이 보이면 이전 설정이므로 페이지를 새로 열어 확인합니다.</p>
@@ -430,30 +439,30 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>암호화용 <code>INTEGRATION_KEY_SEED</code>는 Render가 자동 생성합니다. 재배포해도 이 값을 유지해야 합니다. DB 연결 정보나 암호화 키가 없으면 서버는 시작하지 않습니다. 데이터가 사라질 수 있는 임시 로컬 DB로 자동 전환하지 않습니다.</p>
 <p>4. 배포가 완료되면 발급된 <code>https://…onrender.com</code> 주소를 엽니다. 그 주소가 앱과 API의 주소입니다.</p>
 <p>5. 회원가입하고 테스트용 할 일을 추가합니다. 새로고침과 수동 재배포 후에도 계정과 할 일이 유지되는지 확인합니다.</p>
-<h4 id="subsection-47">저장과 무료 제한</h4>
+<h4 id="subsection-48">저장과 무료 제한</h4>
 <p>- 계정, 할 일, 세션, 암호화한 연결 정보는 Turso DB에 저장합니다. Render의 <code>/tmp/duckduck</code>은 임시 작업 폴더이며 데이터베이스를 보관하지 않습니다.</p>
 <p>- 무료 서버는 대기 후 첫 접속이 느릴 수 있습니다. DB 용량·읽기/쓰기·서버 이용 한도를 넘으면 서비스가 제한될 수 있으므로 제공 업체 대시보드의 사용량을 확인합니다. 무료 한도나 요금이 계속 동일하다고 보장하지 않습니다.</p>
 <p>- 자동 유료 업그레이드를 설정하지 않습니다. 이 구성 파일에는 유료 서버·디스크·유료 DB 리소스가 없습니다.</p>
 <p>- 로컬 SQLite 자동 백업은 이 무료 구성에서 꺼집니다. 원격 DB 보관과 별도 백업은 다릅니다. 필요한 경우 Turso의 무료 범위에서 내보내기를 하고, 자동 백업/시점 복원은 제공 플랜에 포함되는지 확인합니다.</p>
 <p>- Render의 암호화 시드와 Turso 토큰은 안전한 곳에 보관합니다. 서비스나 DB를 삭제하기 전에는 데이터 내보내기와 키 보관을 먼저 진행합니다. 새 Render 서비스를 만들 때 기존 DB를 연결한다면 원래 시드도 옮겨야 합니다.</p>
 <p>- 기존 유료 서버를 이미 만들었다면 GitHub 설정 변경만으로 해지되지 않습니다. 기존 데이터부터 보존하고 Render에서 해당 서비스의 상태와 요금을 따로 확인해야 합니다.</p>
-<h4 id="subsection-48">확인할 기능</h4>
+<h4 id="subsection-49">확인할 기능</h4>
 <p>- 계정 생성·로그인 → 할 일 추가 → 새로고침 → 수동 재배포 후 계정/할 일 유지</p>
 <p>- 완료 → 약 4초 뒤 log 이동 → 미완료로 되돌리기</p>
 <p>- 덕에서 초안 만들기 → Todo 추가 → 기록 찾기</p>
 <p>- 내정보에서 <code>클라우드 DB 저장</code> 안내 확인</p>
 <p>이메일·OAuth는 별도 설정 후 사용할 수 있습니다. AI 연결과 아이폰 배포는 포함하지 않습니다. 원격 DB 드라이버는 로컬 HTTP 프로토콜 테스트 서버를 통해 재시작/계정 분리/트랜잭션/암호화 키 보존을 검증했습니다. 이후 사용자가 실제 Render·Turso 서비스의 기본 접속/저장 동작을 확인했습니다. 에이전트의 직접 공개 주소 검증은 환경의 네트워크 제한으로 수행하지 못했습니다. 자세한 설정은 <a href="https://github.com/sjfieni/donknow/blob/main/docs/operations.md">운영 안내</a>를 참고하세요.</p>
-<h4 id="subsection-49">시작 명령 오류가 발생한 경우</h4>
+<h4 id="subsection-50">시작 명령 오류가 발생한 경우</h4>
 <p><code>export PUBLIC_ORIGIN=...; exec node server.js: not found</code> / 종료 코드 127은 이전 Docker 시작 명령이 잘못 해석된 경우다. 최신 설정은 단순한 <code>node server.js</code>를 사용하고 서버가 <code>RENDER_EXTERNAL_URL</code>을 직접 읽는다. 기존 <code>PUBLIC_ORIGIN</code>을 직접 설정한 경우 그 값을 우선하며 HTTPS 주소 검증은 유지한다.</p>
 <p>GitHub 업데이트 후 Render의 해당 Blueprint에서 <strong>Manual sync</strong>로 설정을 동기화한다. 서비스 설정의 Docker Command가 <code>node server.js</code>인지 확인하고, 배포가 시작되지 않으면 <strong>Manual Deploy → Deploy latest commit</strong>을 실행한다. Turso URL·토큰·기존 암호화 시드는 바꾸거나 지우지 않는다.</p>
-<h4 id="subsection-50">네이티브 TLS 인증서 오류</h4>
+<h4 id="subsection-51">네이티브 TLS 인증서 오류</h4>
 <p><code>InvalidTlsConfiguration ... no valid native root CA certificates found</code>는 런타임 OS에 신뢰할 루트 CA 인증서가 없을 때 발생한다. Node.js의 내장 CA 저장소와 libSQL 네이티브 TLS 저장소는 다르다. Docker 런타임에 Debian의 <code>ca-certificates</code>를 설치하고 <code>SSL_CERT_FILE</code>/<code>SSL_CERT_DIR</code>를 표준 시스템 저장소로 지정했다. 인증서 검증을 끄지 않는다.</p>
 <p>이 변경은 이미지 재빌드가 필요하다. Render에서 <strong>Manual Deploy → Deploy latest commit</strong>으로 최신 코드를 배포한다. 캐시 문제로 이전 이미지가 사용되면 <strong>Clear build cache &amp; deploy</strong>를 사용한다. Turso URL·토큰·암호화 시드는 바꾸지 않는다.</p>
-<h3 id="subsection-51">原文 / docs/connect-google.md</h3>
-<h3 id="subsection-52">현재 테스트 서버에서 이메일 인증과 Google Tasks 연결하기</h3>
+<h3 id="subsection-52">原文 / docs/connect-google.md</h3>
+<h3 id="subsection-53">현재 테스트 서버에서 이메일 인증과 Google Tasks 연결하기</h3>
 <p>앱: https://duckduck-test.onrender.com</p>
 <p>사용자가 기본 접속과 저장 동작을 확인한 테스트 서버를 대상으로 한다. AI 연결과 아이폰 배포는 계속 보류한다. 이 안내만으로 외부 계정/메일/OAuth가 활성화되지는 않는다.</p>
-<h4 id="subsection-53">1. 내 계정 이메일 인증 준비</h4>
+<h4 id="subsection-54">1. 내 계정 이메일 인증 준비</h4>
 <p>현재 메일 어댑터는 Resend를 사용한다. 먼저 <a href="https://resend.com">Resend</a>에 무료 계정을 만든다. 무료 플랜 제공 조건과 한도는 가입 화면에서 확인하며, 유료 업그레이드는 선택하지 않는다.</p>
 <p>개인 테스트 단계에서는 Resend의 기본 테스트 발신자 <code>onboarding@resend.dev</code>를 사용할 수 있다. 이 발신자는 <strong>Resend 가입 계정의 이메일 주소로만</strong> 테스트 메일을 보낼 수 있다. 따라서 덕에서 인증할 계정의 이메일과 Resend 계정 이메일을 같게 해야 한다. 다른 사용자의 이메일로 보내려면 추후 소유 도메인을 등록하고 검증해야 한다.</p>
 <p><a href="https://resend.com/api-keys">Resend API Keys</a>에서 메일 발송용 키를 만든 뒤, <a href="https://dashboard.render.com/web/srv-dbgpc0ff3r2c73abc7e0/env">Render 환경 설정</a>에 다음 두 값을 등록한다.</p>
@@ -464,7 +473,7 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 </tbody></table></div>
 <p>키는 채팅이나 GitHub에 보내지 않는다. <code>Bearer</code>, 변수 이름, 따옴표를 붙이지 않는다. 기존 Turso URL·토큰·암호화 시드를 유지한다. 환경 설정을 저장하고 재배포한다.</p>
 <p>앱에서 내정보 → 이메일 인증 → 인증번호 요청 → 받은 메일의 6자리 번호 입력 순서로 확인한다. 메일 요청이 접수됐다는 안내는 실제 수신 완료와 다르므로 수신함/스팸함 및 Resend 발송 상태도 확인한다.</p>
-<h4 id="subsection-54">2. Google Tasks 앱 등록</h4>
+<h4 id="subsection-55">2. Google Tasks 앱 등록</h4>
 <p>1. <a href="https://console.cloud.google.com/">Google Cloud Console</a>에서 프로젝트를 만든다. 개인 Tasks 연결에 결제 계정이나 유료 API를 추가하지 않는다.</p>
 <p>2. <a href="https://console.cloud.google.com/apis/library/tasks.googleapis.com">Tasks API 설정</a>에서 현재 프로젝트의 Google Tasks API를 활성화한다.</p>
 <p>3. Google Auth Platform/OAuth 동의 화면에서 외부 사용(External), 테스트 상태(Testing)로 설정하고 실제 연결할 Google 이메일을 테스트 사용자로 등록한다. 앱 이름은 <code>duckduck</code>으로 설정한다.</p>
@@ -483,7 +492,7 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <tr><td><code>GOOGLE_CLIENT_SECRET</code></td><td>클라이언트 보안 비밀 값만</td></tr>
 </tbody></table></div>
 <p>클라이언트 보안 비밀도 채팅/GitHub에 보내지 않는다. 저장 후 재배포한다. Testing 상태의 OAuth 토큰은 Google의 테스트 앱 정책에 따라 재승인이 필요할 수 있다.</p>
-<h4 id="subsection-55">3. 실제 연결 확인</h4>
+<h4 id="subsection-56">3. 실제 연결 확인</h4>
 <p>1. 덕에서 이메일 인증을 마친 계정으로 로그인한다.</p>
 <p>2. 내정보 → Google 연결 안내 → <strong>Google Tasks 읽기</strong>만 선택한다. 기본으로 선택된 캘린더 읽기는 처음에는 해제한다.</p>
 <p>3. Google 연결 → 등록한 테스트 Google 계정으로 승인한다. 팝업을 허용하고 완료 후 덕으로 돌아와 연결 상태를 새로고침한다.</p>
@@ -491,7 +500,7 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>5. 완료 기록 보기에서는 참고용 기록만 표시되고 Todo로 가져오는 버튼이 없는지 확인한다.</p>
 <p>6. 덕의 기록 찾기에서 같은 제목을 검색한다. 필요하면 Google Tasks에서 찾기를 실행한다.</p>
 <p>기본 읽기 연결에서는 덕에서 바꾼 상태를 Google 원본으로 전파하지 않는다. 별도 수정 권한을 승인하고 완료 동기화를 켠 경우에만 이후 완료 변경을 반영한다. 연결 해제 후에도 이미 가져온 Todo는 남는다.</p>
-<h4 id="subsection-56">문제가 생기면</h4>
+<h4 id="subsection-57">문제가 생기면</h4>
 <p>- 메일이 안 옴: Resend 발신자 제한, 가입 이메일 일치, API 키, 발송 실패 상태를 확인한다.</p>
 <p>- Google 연결이 설정 대기: 두 Google 환경 변수 저장 후 최신 재배포 여부를 확인한다.</p>
 <p>- redirect_uri_mismatch: 위 리디렉션 URI를 Google의 승인된 URI와 비교한다.</p>
@@ -499,22 +508,22 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>- insufficient permissions/API 비활성: Tasks API와 Tasks 읽기 범위를 확인하고 연결 권한을 다시 선택한다.</p>
 <p>공유할 화면이나 로그에는 API 키, 토큰, OAuth 코드, 클라이언트 보안 비밀을 포함하지 않는다.</p>
 <p>다른 서비스, 선택적 완료 동기화, 실제 기기 확인, 백업 활성화는 <a href="https://github.com/sjfieni/donknow/blob/main/docs/remaining-activation.md">남은 연결·운영 안내</a>를 따른다.</p>
-<h3 id="subsection-57">原文 / docs/remaining-activation.md</h3>
-<h3 id="subsection-58">남은 연결 활성화와 운영 확인</h3>
+<h3 id="subsection-58">原文 / docs/remaining-activation.md</h3>
+<h3 id="subsection-59">남은 연결 활성화와 운영 확인</h3>
 <p>기준: 2026-10-29, 무료 Render + Turso. AI 연결과 아이폰 배포는 보류한다.</p>
-<h4 id="subsection-59">확인 상태</h4>
+<h4 id="subsection-60">확인 상태</h4>
 <p>- 사용자가 실제 서비스에서 확인: 가입/저장, 이메일 인증, Google Tasks 미완료 가져오기, 완료 기록 참고용 조회, 덕의 외부 완료 기록 검색.</p>
 <p>- 이번에 구현/자동 검증: Google Tasks 완료 동기화 선택·전송 대기열·충돌 처리·상태 가져오기, 월별 Google 캘린더 조회, 서비스 연결 점검, 개인 JSON 내보내기, 원격 DB 암호화 백업·새 DB 복원, 아이폰 미리 알림 상태 반영 어댑터.</p>
 <p>- 실제 계정에서 추가 확인할 것: Google 수정 권한 승인, 캘린더/Gmail/Drive 추가 승인, Slack/Notion OAuth 앱 등록·승인, GitHub 백업 비밀 설정 및 실행.</p>
 <p>- 실제 아이폰에서 확인할 것: EventKit 권한과 상태 맞추기, 기기 알림, JSON 파일 공유. 번들 생성은 실기기 검증과 다르다.</p>
-<h4 id="subsection-60">1. Google의 다른 기능</h4>
+<h4 id="subsection-61">1. Google의 다른 기능</h4>
 <p><a href="https://console.cloud.google.com/apis/library?project=duckduck-513102&amp;authuser=1">프로젝트 duckduck-513102</a>에서 Google Calendar API, Gmail API, Google Drive API를 각각 활성화한다. 기존 웹 OAuth 클라이언트와 콜백은 유지한다.</p>
 <p>OAuth 데이터 액세스에 필요한 범위만 추가한다.</p>
 <p>- 캘린더: <code>https://www.googleapis.com/auth/calendar.readonly</code></p>
 <p>- 메일: <code>https://www.googleapis.com/auth/gmail.readonly</code></p>
 <p>- 드라이브: <code>https://www.googleapis.com/auth/drive.metadata.readonly</code></p>
 <p>덕의 내정보 → Google에서 원하는 범위를 선택하고 권한을 다시 승인한다. 캘린더는 조회 중인 달의 기본 캘린더 일정과 다음 페이지를 보여준다. 일정 시각은 한국 날짜 기준이다. 메일은 최근 30일 받은편지함의 제목, Drive는 파일 이름/메타데이터를 가져온다. 메일 본문·첨부/파일 본문 전체를 읽거나 전송하지 않는다. Gmail의 공개 배포/민감 범위 심사는 개인 테스트 완료와 별개다.</p>
-<h4 id="subsection-61">2. Google Tasks 완료 동기화</h4>
+<h4 id="subsection-62">2. Google Tasks 완료 동기화</h4>
 <p>기존 <code>tasks.readonly</code> 연결은 그대로 읽기 전용이다. 원본 변경은 자동으로 켜지지 않는다.</p>
 <p>1. Google 동의 범위에 <code>https://www.googleapis.com/auth/tasks</code>를 추가한다. 이 범위는 생성/수정/삭제를 포함하지만 현재 덕은 완료 여부만 변경한다.</p>
 <p>2. 덕에서 <code>Google Tasks 수정 권한</code>을 선택하고 다시 승인한다.</p>
@@ -523,16 +532,16 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>5. 동기화 상태 새로고침에서 대기/실패/충돌을 확인한다. 실패는 재시도할 수 있다.</p>
 <p>6. Google에서 바꾼 완료 상태는 <code>Google 완료 상태 다시 읽기</code>로 가져온 항목만 5개씩 확인한다. 충돌한 항목은 이 동작으로 원본 상태에 맞춘다. 새 완료 기록을 Todo로 생성하지 않는다.</p>
 <p>원본 ETag를 확인하고 <code>If-Match</code>로 변경한다. 충돌 시 덮어쓰기를 멈춘다. 제목·날짜·삭제는 동기화하지 않는다. 끄기/연결 해제는 대기열을 취소하지만 이미 전송된 요청을 되돌리지는 않는다.</p>
-<h4 id="subsection-62">3. Slack</h4>
+<h4 id="subsection-63">3. Slack</h4>
 <p><a href="https://api.slack.com/apps">Slack 앱 만들기</a>에서 OAuth 앱을 만든다. redirect URL:</p>
 <p><code>https://duckduck-test.onrender.com/api/integrations/slack/callback</code></p>
 <p>Bot scopes: <code>channels:read</code>, <code>channels:history</code>, <code>groups:read</code>, <code>groups:history</code>. Render 환경에 <code>SLACK_CLIENT_ID</code>, <code>SLACK_CLIENT_SECRET</code> 값을 등록하고 재배포한다. 덕에서 Slack 연결을 승인하고, 연결 점검 → 채널 → 메시지 → 선택 가져오기를 확인한다. 비공개 채널 등은 앱이 접근 가능한 범위만 읽으며 필요하면 사용자가 채널에 앱을 초대한다. 메시지를 보내지 않는다.</p>
-<h4 id="subsection-63">4. Notion (제품 안의 읽기 연결)</h4>
+<h4 id="subsection-64">4. Notion (제품 안의 읽기 연결)</h4>
 <p><a href="https://www.notion.so/profile/integrations">Notion integrations</a>에서 OAuth 가능한 공개 integration을 등록하고 읽기 권한을 설정한다. redirect URL:</p>
 <p><code>https://duckduck-test.onrender.com/api/integrations/notion/callback</code></p>
 <p>Render에 <code>NOTION_CLIENT_ID</code>, <code>NOTION_CLIENT_SECRET</code>를 등록한다. 덕에서 연결할 워크스페이스와 페이지를 승인하고 연결 점검 → 페이지 선택 → Todo 가져오기를 확인한다. 내부 integration 토큰을 클라이언트 보안 비밀 대신 넣지 않는다. 이 기능은 승인한 페이지 읽기/가져오기용이며 대화 에이전트에게 Notion 페이지 작성 권한을 제공하지 않는다.</p>
 <p>제품의 Notion 연결과 개발 문서를 정리할 Notion 페이지는 별개다. 문서 대상 계정·워크스페이스는 실제 연결을 통해 확인해야 한다.</p>
-<h4 id="subsection-64">5. 아이폰 기기 확인</h4>
+<h4 id="subsection-65">5. 아이폰 기기 확인</h4>
 <p>새 네이티브 모듈을 포함한 개발 빌드가 있는 실제 아이폰에서만 확인한다. 배포는 이번 범위가 아니다.</p>
 <p>- 미리 알림 권한 거절 → 설정에서 허용 → 목록 재조회</p>
 <p>- 날짜 없음/반복/완료 항목/다른 목록/다른 기기 ID 확인</p>
@@ -540,19 +549,19 @@ be39c5d Speed up public project document with lazy cached images and linked cont
 <p>- <code>아이폰 완료 상태를 덕에 반영</code>, <code>덕의 완료 상태를 아이폰에 반영</code> 후 원본 변경 확인. 원본 변경에는 별도 확인 버튼이 있다. 5개씩 직접 실행하며 자동 백그라운드 동기화가 아니다.</p>
 <p>- 알림 권한 거절/허용, 미래 시간, 잠금 화면, 완료·삭제·로그아웃 후 예약 취소, 앱 재실행 후 중복 없음</p>
 <p>- 내 데이터 파일 공유에서 JSON 파일 저장 확인. 임시 공유 파일은 공유 종료 후 삭제한다.</p>
-<h4 id="subsection-65">6. 본인 데이터 내보내기</h4>
+<h4 id="subsection-66">6. 본인 데이터 내보내기</h4>
 <p>내정보의 <code>내 데이터 파일 다운로드</code>는 로그인한 사용자의 계정 표시 정보와 Todo/완료 기록만 JSON으로 제공한다. 비밀번호 해시·세션·외부 토큰은 포함하지 않는다. 이 파일은 개인 데이터 보관용이며 전체 DB 재난 복구 백업과 다르다. 웹은 다운로드, 네이티브는 파일 공유를 사용한다.</p>
-<h4 id="subsection-66">7. 원격 DB 백업·복구</h4>
+<h4 id="subsection-67">7. 원격 DB 백업·복구</h4>
 <p><a href="https://github.com/sjfieni/donknow/blob/main/docs/remote-recovery.md">원격 백업 안내</a>를 따른다. GitHub 비밀 설정이 필요하며 기본값은 비활성화다. 파일은 인증된 AES-256-GCM으로 암호화된다. 복원은 다른 빈 DB에만 허용한다. 세션/인증 코드/전송 대기열은 복원 후 제거하고 완료 동기화를 끈다.</p>
-<h3 id="subsection-67">原文 / docs/remote-recovery.md</h3>
-<h3 id="subsection-68">Turso 원격 백업과 복구</h3>
+<h3 id="subsection-68">原文 / docs/remote-recovery.md</h3>
+<h3 id="subsection-69">Turso 원격 백업과 복구</h3>
 <p>이 기능은 무료 서버의 로컬 임시 파일에 의존하지 않는다. 백업에는 모든 계정의 민감한 DB 내용이 있으므로 <strong>암호화된 파일만</strong> 외부에 보관한다. 현재 앱의 작은 테스트 DB를 위한 도구이며 64MB 내보내기 제한이 있다. 큰 DB는 제공 업체 내보내기를 사용한다.</p>
-<h4 id="subsection-69">수동 백업</h4>
+<h4 id="subsection-70">수동 백업</h4>
 <p>관리 환경에 <code>STORE_DRIVER=turso</code>, <code>TURSO_DATABASE_URL</code>, <code>TURSO_AUTH_TOKEN</code>과 <strong>원래의</strong> <code>INTEGRATION_KEY_SEED</code> 또는 <code>INTEGRATION_TOKEN_KEY</code>를 비밀 환경 변수로 주입한다. 키/시드/토큰을 채팅·GitHub 코드·셸 명령 인수에 넣지 않는다. 원래 키가 DB의 지문과 일치하지 않으면 백업을 거절한다.</p>
 <pre><code>npm ci
 npm run backup:remote -- --out /안전한/경로/duckduck.duckbackup</code></pre>
 <p>일관된 읽기 트랜잭션으로 스키마와 데이터를 수집하고 압축한 다음 AES-256-GCM으로 암호화한다. 원본 DB에는 데이터를 쓰지 않는다. 파일은 기존 경로를 덮어쓰지 않는다. 파일 확장자는 Git과 Docker 컨텍스트에서 제외된다.</p>
-<h4 id="subsection-70">GitHub에서 자동 실행</h4>
+<h4 id="subsection-71">GitHub에서 자동 실행</h4>
 <p>1. 저장소 Settings → Secrets and variables → Actions에 다음 Repository secrets를 등록한다.</p>
 <p>   - <code>TURSO_DATABASE_URL</code></p>
 <p>   - <code>TURSO_AUTH_TOKEN</code> (백업에는 읽기 전용 토큰 권장)</p>
@@ -561,7 +570,7 @@ npm run backup:remote -- --out /안전한/경로/duckduck.duckbackup</code></pre
 <p>3. Actions → Encrypted remote database backup → Run workflow로 한 번 실행하고 성공 여부를 확인한다.</p>
 <p>4. 성공한 실행의 암호화 artifact를 다운로드해 보관한다. 스케줄은 매일 한국 시간 03:30, artifact 보관은 7일이다.</p>
 <p>비밀 설정과 활성화 변수가 없으면 백업 작업은 활성화되지 않는다. 파일만 추가했다고 백업이 이미 운영 중이라고 말하지 않는다. GitHub Actions/아티팩트도 계정의 무료 한도가 있으므로 유료 사용 한도를 늘리지 않고 사용량을 확인한다. 백업 파일과 암호화 키/시드는 서로 분리해 안전하게 보관한다. 잃어버린 키는 복원할 수 없다.</p>
-<h4 id="subsection-71">새 DB로 복원</h4>
+<h4 id="subsection-72">새 DB로 복원</h4>
 <p>1. 새 빈 Turso DB를 만든다. 현재 운영 중인 DB를 삭제하거나 비우지 않는다.</p>
 <p>2. 관리 환경의 DB URL/쓰기 토큰을 <strong>새 DB</strong> 것으로 설정하고, 암호화 키/시드는 원래 값을 유지한다.</p>
 <p>3. 아래를 실행한다.</p>
@@ -571,17 +580,17 @@ npm run backup:remote -- --out /안전한/경로/duckduck.duckbackup</code></pre
 <p>4. 새 DB를 별도 테스트 서비스에 연결하고 로그인·Todo 수·완료 기록·내보내기를 검증한다.</p>
 <p>5. 검증 후에만 Render의 DB URL/토큰을 새 DB로 바꾼다. 암호화 시드는 그대로 유지한다. 기존 DB는 검증이 끝날 때까지 보존한다.</p>
 <p>이 저장소에서는 격리된 DB로 암호화·무결성·빈 DB 복원·자격 증명 재생 방지 검증을 수행했다. 실제 Turso 계정의 스케줄과 재난 복구 훈련은 비밀 설정과 실행 확인이 필요하다.</p>
-<h3 id="subsection-72">原文 / docs/operations.md</h3>
-<h3 id="subsection-73">운영 준비 및 외부 서비스 활성화</h3>
+<h3 id="subsection-73">原文 / docs/operations.md</h3>
+<h3 id="subsection-74">운영 준비 및 외부 서비스 활성화</h3>
 <p>AI 연결과 iPhone 배포는 이번 범위에서 제외한다. 아래 구성은 운영 서버를 준비한 뒤 활성화하는 절차이며, 이 저장소의 코드가 공개 호스트나 외부 계정을 자동 생성하지는 않는다.</p>
-<h4 id="subsection-74">기본 무료 배포</h4>
+<h4 id="subsection-75">기본 무료 배포</h4>
 <p>기본 <code>render.yaml</code>은 Render <strong>Free</strong> 서버와 별도 <strong>Turso 무료 DB</strong>를 연결한다. 유료 디스크는 생성하지 않는다. 계정 생성 및 환경 설정은 <a href="https://github.com/sjfieni/donknow/blob/main/docs/test-deployment.md">무료 테스트 서버 안내</a>를 따른다. 아래 Docker/Compose 영구 볼륨 구성은 직접 서버를 운영하는 별도 선택지다.</p>
 <p>- <code>STORE_DRIVER=turso</code>, <code>TURSO_DATABASE_URL</code>, <code>TURSO_AUTH_TOKEN</code>을 설정한다. URL은 <code>libsql://</code> 또는 <code>https://</code>를 사용하며 원격 DB를 직접 읽고 쓴다. 로컬 복제본이나 임시 SQLite 폴백을 만들지 않는다.</p>
 <p>- <code>INTEGRATION_KEY_SEED</code>는 Render에서 생성한 안정적인 비밀값이다. SHA-256으로 용도를 구분해 암호화 키를 유도한다. 기존 32바이트 base64 <code>INTEGRATION_TOKEN_KEY</code>를 직접 설정하면 우선한다. 키/시드는 재배포와 서비스 이전 시 반드시 유지해야 한다. 다른 키로 기존 DB를 열면 실패한다.</p>
 <p>- 원격 저장에서는 <code>BACKUP_ENABLED=0</code>이다. 기존 <code>npm run backup</code>은 로컬 SQLite용이며 원격 DB 내보내기로 대체해야 한다. DB 내보내기·사용량·무료 한도는 Turso에서 관리한다. 무료 서버 재시작 후 데이터 유지와 별도 재난 복구 백업을 같은 것으로 보지 않는다.</p>
 <p>- 이 구성은 유료 리소스를 만들지 않는다. 실제 제공 업체의 무료 한도와 정책은 계정 화면에서 확인한다. 유료 플랜이나 자동 결제를 활성화하지 않는다.</p>
 <p>- 이전 유료 Blueprint를 이미 적용했다면 코드 변경이 유료 서버를 자동 해지하지 않는다. 기존 데이터를 내보낸 후 서비스 상태를 별도 확인한다.</p>
-<h4 id="subsection-75">현재 동작과 검증 범위</h4>
+<h4 id="subsection-76">현재 동작과 검증 범위</h4>
 <div class="table"><table><tbody>
 <tr><td>항목</td><td>구현</td><td>현재 검증</td></tr>
 <tr><td>계정·Todo 저장</td><td>로컬 SQLite WAL 또는 Turso 원격 libSQL, 계정별 접근 제어</td><td>실제 API, 로컬 재시작, 원격 HTTP 프로토콜·앱 파일 재생성 테스트</td></tr>
@@ -594,7 +603,7 @@ npm run backup:remote -- --out /안전한/경로/duckduck.duckbackup</code></pre
 <tr><td>Slack·Notion</td><td>OAuth, 읽기·페이지 이동·선택 가져오기·해제</td><td>공식 API 형태를 따른 모의 응답으로 검증</td></tr>
 </tbody></table></div>
 <p>발송 서비스와 OAuth 앱이 미설정이면 앱에 ‘설정 대기’를 표시하고 실제 연결·발송이 성공했다고 표시하지 않는다. 테스트 수신함은 NODE_ENV=test에서만 사용할 수 있다.</p>
-<h4 id="subsection-76">서버와 도메인</h4>
+<h4 id="subsection-77">서버와 도메인</h4>
 <p>Node.js 24, Docker/Compose가 있는 Linux 서버와 도메인을 준비한다. 도메인의 DNS를 서버로 연결하고 80/443 포트를 허용한다. 루트 <code>.env.example</code>을 <code>.env</code>로 복사해 실제 APP_DOMAIN을 설정한다. <code>.env</code>는 Git에 넣지 않는다.</p>
 <pre><code>docker compose config --quiet
 docker compose up -d --build</code></pre>
@@ -606,7 +615,7 @@ docker compose up -d --build</code></pre>
   --secret id=extra_ca,src=/usr/local/share/ca-certificates/environment-proxy-ca.crt \
   -t duckduck:cloud-test .</code></pre>
 <p>일반 호스팅에서는 추가 CA 없이 기본 <code>docker compose up --build</code>를 사용한다. 해당 프록시 뒤에서 운영 API 통신도 수행한다면 호스트가 제공하는 공개 CA를 읽기 전용으로 마운트하고 NODE_EXTRA_CA_CERTS로 신뢰를 추가한다. strict-ssl/TLS 검증이나 패키지 체크섬을 비활성화하지 않는다.</p>
-<h4 id="subsection-77">백업과 복원</h4>
+<h4 id="subsection-78">백업과 복원</h4>
 <p>Compose 기본값은 24시간마다 백업, 14일 보관이다. 로컬 백업 파일과 원본 DB는 같은 저장소에 두지 않는 구성을 권장하며 Compose는 별도 볼륨을 사용한다. 외부 보관소가 없으면 서버 자체 손실에 대한 원격 복구는 제공하지 않는다.</p>
 <pre><code>npm run backup
 npm run backup -- --restore /secure/backups/duckduck-backup-TIMESTAMP-UUID.sqlite \
@@ -617,11 +626,11 @@ npm run backup -- --restore /secure/backups/duckduck-backup-TIMESTAMP-UUID.sqlit
 <h5>S3 외부 보관</h5>
 <p>BACKUP_S3_BUCKET, BACKUP_S3_REGION, 선택적으로 BACKUP_S3_PREFIX를 지정한다. 가능하면 서버 IAM role을 사용하고, 필요하면 일반 호스팅 비밀 저장소에 AWS 자격 증명을 넣는다. SigV4 서명용 자격 증명은 로컬에서 실제 값으로 사용하므로 프록시 placeholder를 넣지 않는다. 이 작업에서 버킷이나 IAM 계정을 만들지 않았다.</p>
 <p>전용 bucket/prefix에 PutObject, ListBucket, DeleteObject 권한을 제한한다. 업로드는 SSE-S3와 SHA-256 체크섬을 사용한다. 보관 정리는 전용 prefix 아래 duckduck-backup 형식의 이전 파일만 대상으로 한다. 앱이 중지되어도 보관 정책이 적용되도록 버킷의 해당 prefix에 14일 만료 lifecycle도 설정하는 것이 좋다. 기존 버킷 전체 정책을 코드가 덮어쓰지는 않는다. 백업 속 원래 암호화 키의 별도 보관도 필요하다.</p>
-<h4 id="subsection-78">이메일</h4>
+<h4 id="subsection-79">이메일</h4>
 <p>Resend 계정을 만들고 발신 도메인을 인증한다. MAIL_FROM(인증된 발신 주소), MAIL_API_KEY를 서버의 보안 설정에 넣는다. API 주소는 <code>https://api.resend.com/emails</code>로 고정한다. 키는 앱 번들이나 채팅에 넣지 않는다.</p>
 <p>인증·재설정 요청은 암호화된 outbox에 기록하고 최대 5번 재시도한다. 공급자가 수락한 작업은 큐의 메시지 본문을 지운다. API의 202는 요청이 큐에 들어갔음을 의미하며 받은편지함 도착을 보장하지 않는다. 인증번호는 15분, 최대 5회 시도이며 재요청은 최소 1분, 계정별 시간당 최대 5회로 제한한다. 비밀번호 재설정은 계정 존재 여부를 응답으로 구분하지 않는다. 성공 시 모든 기존 세션을 폐기한다.</p>
 <p>실제 이메일 발송은 키·발신 도메인을 설정하고 본인이 요청한 이메일로 전달을 확인한 뒤 활성화된 것으로 간주한다. 테스트 수신함 결과를 실제 발송 결과로 보고하지 않는다.</p>
-<h4 id="subsection-79">OAuth 공통</h4>
+<h4 id="subsection-80">OAuth 공통</h4>
 <p>연결은 이메일 인증된 계정에서 시작한다. state는 계정과 provider에 묶이고 10분/한 번만 유효하다. Google은 PKCE를 사용한다. 공급자 토큰은 서버에서 AES-256-GCM으로 암호화하고 앱에 반환하지 않는다. 상태 응답에는 연결 여부·승인한 기능·계정 표시만 담는다. 재연결 시 다른 계정의 자료를 혼동하지 않도록 연결별 자료 ID를 분리한다.</p>
 <p>PUBLIC_ORIGIN을 실제 서비스 주소로 설정하고 각 콘솔에 아래 callback을 정확히 등록한다.</p>
 <div class="table"><table><tbody>
@@ -639,13 +648,13 @@ npm run backup -- --restore /secure/backups/duckduck-backup-TIMESTAMP-UUID.sqlit
 <p>Slack 앱의 bot OAuth scopes에 channels:read, channels:history, groups:read, groups:history와 redirect URL을 등록한다. 승인된 워크스페이스의 채널을 고른 뒤 메시지를 가져온다. private 채널과 history는 앱이 접근 가능한 채널만 가능하며 필요하면 사용자가 채널에 앱을 초대한다. 앱이 메시지를 보내거나 자동으로 채널에 참여하지 않는다.</p>
 <h5>Notion</h5>
 <p>공개 integration을 만들고 read content capability와 redirect URL을 설정한다. 사용자가 승인·공유한 페이지를 검색하고 선택해서 가져온다. Notion API version은 2025-09-03이며 OAuth token/refresh/revoke 형태는 공식 SDK @notionhq/client 5.28.0에서도 확인했다.</p>
-<h4 id="subsection-80">알림</h4>
+<h4 id="subsection-81">알림</h4>
 <p>Todo 편집에서 예정일·알림 시간을 설정하고, 내정보에서 이 기기의 알림을 켠다. 권한 요청은 사용자가 켤 때만 한다. 로컬 알림은 기기별이며 서버 푸시나 APNs 계정이 필요하지 않다. 가까운 60개부터 예약한다. 완료/삭제/변경/로그아웃/계정 삭제 때 취소하거나 다시 예약한다. 앱을 다시 활성화하면 서버 Todo를 불러오고 예약을 조정한다. 다른 기기에서 바꾼 내용을 즉시 전달하는 원격 푸시는 이번 구현에 포함하지 않는다.</p>
 <p>웹에서는 알림 시간을 저장하지만 OS 알림을 예약하지 않는다. 아이폰 실제 알림은 향후 실기기 확인 때 검증한다. 어댑터 테스트 통과나 iOS 번들 생성만으로 기기에서 울렸다고 주장하지 않는다.</p>
-<h4 id="subsection-81">계정 삭제와 운영 데이터</h4>
+<h4 id="subsection-82">계정 삭제와 운영 데이터</h4>
 <p>삭제는 현재 비밀번호와 명시적 확인을 요구한다. 현재 운영 DB의 계정·Todo·log·세션·인증 코드·연결 토큰·자료 캐시를 삭제하고, 외부 연결 해제를 시도한다. 공급자 해제가 실패하면 해당 서비스 설정에서도 접근 권한 해제를 확인해야 한다. 이미 전달된 이메일과 공급자 자신의 기록은 해당 서비스 정책을 따른다.</p>
 <p>운영 백업의 예전 데이터는 설정한 보관 기간에 따라 정리된다. 재해 복구할 때는 가장 최근 백업과 계정 삭제 이력을 확인해야 하며 과거 백업을 복원하면 그 시점의 데이터로 돌아간다는 점을 고려한다.</p>
-<h4 id="subsection-82">검증 명령</h4>
+<h4 id="subsection-83">검증 명령</h4>
 <pre><code>npm run check
 npm test
 npm --prefix mobile run typecheck
@@ -666,13 +675,13 @@ npm run test:container</code></pre>
 <h5>외부 Tasks 검색 검증</h5>
 <p>로그인한 사용자의 <code>GET /api/integrations/google/search?q=검색어</code>는 기존 Tasks 읽기 권한을 사용한다. 빈/120자 초과 검색어를 거절하고, 연결 누락은 명시적으로 안내한다. 검색은 사용자별 15분당 30회로 제한된다. 한 번의 검색은 최대 5개 목록의 두 상태 첫 페이지를 조회하므로 최대 11번의 공급자 요청을 사용한다. 반환 <code>partial</code>이 참이면 전체 검색 결과라고 해석하지 않는다. 연결 변경/해제 중 도착한 결과는 반환하지 않는다.</p>
 <p>실제 Google 계정에서 권한 재승인, 큰 목록의 부분 검색 안내, 완료 기록 참고, 미완료 가져오기 및 원본 상태 변경 후 재검색을 확인해야 한다. 현재 자동 검증은 격리된 계정과 공급자 테스트 응답을 사용한다. <code>artifacts/mobile-external-search-fixture.png</code>는 테스트 응답으로 확인한 UI다.</p>
-<h4 id="subsection-83">2026-10-29 운영 보완</h4>
+<h4 id="subsection-84">2026-10-29 운영 보완</h4>
 <p>최신 동작과 실제 확인 상태는 <a href="https://github.com/sjfieni/donknow/blob/main/docs/remaining-activation.md">남은 연결·운영 안내</a>, 원격 백업·복원은 <a href="https://github.com/sjfieni/donknow/blob/main/docs/remote-recovery.md">재난 복구 안내</a>를 따른다. 기본 읽기 연결은 원본을 변경하지 않으며 Google Tasks 완료 동기화는 수정 권한과 별도 켜기가 필요하다. 백업 워크플로는 비밀 설정과 활성화 변수가 없으면 실행되지 않는다.</p>
-<h3 id="subsection-84">原文 / docs/public-project.md</h3>
-<h3 id="subsection-85">공개 프로젝트 문서와 댓글</h3>
+<h3 id="subsection-85">原文 / docs/public-project.md</h3>
+<h3 id="subsection-86">공개 프로젝트 문서와 댓글</h3>
 <p>배포 후 주소: https://duckduck-test.onrender.com/project</p>
 <p>본문·이미지 35개가 HTML 안에 들어 있어 파일 업로드나 Notion 연결 없이 읽는다. 덕 앱과 같은 무료 Render/Turso를 사용한다. 새 외부 댓글 서비스를 가입하거나 결제하지 않는다.</p>
-<h4 id="subsection-86">사용</h4>
+<h4 id="subsection-87">사용</h4>
 <p>1. 문서를 열고 하단 댓글 영역을 사용한다. 각 절과 이미지의 수정 요청 버튼으로 위치를 지정할 수 있다.</p>
 <p>2. 기존 덕 계정으로 로그인한다. 이메일 인증을 마친 계정만 작성한다.</p>
 <p>3. 공개 표시 이름과 수정 내용을 입력한다. 계정 이메일을 자동으로 공개하지 않는다.</p>
@@ -680,7 +689,7 @@ npm run test:container</code></pre>
 <p>5. 댓글을 남기고 AI에게 페이지 주소와 댓글 위치를 알린다. 자동 감시/자동 수정은 하지 않는다.</p>
 <p>6. AI의 네트워크가 제한되면 ‘AI에 전달할 댓글 복사’로 내용을 대화에 붙여넣는다. 복사는 첫 50개 열린 요청이며 더 있으면 다음 페이지 안내를 표시한다.</p>
 <p>문서와 댓글은 링크를 가진 사람에게 공개된다. 비밀번호·API 키·개인정보는 적지 않는다. 댓글은 DB에 저장되어 재시작해도 유지되며 계정 삭제 시 본인 댓글도 삭제된다. 개인 JSON 내보내기에 본인 댓글도 포함한다.</p>
-<h4 id="subsection-87">API와 검증</h4>
+<h4 id="subsection-88">API와 검증</h4>
 <p>- <code>GET /api/project/comments?status=open</code> 공개 읽기, 50개 페이지와 cursor</p>
 <p>- <code>GET /api/project/comments/:id</code> 공개 단일 댓글 읽기</p>
 <p>- <code>POST /api/project/comments</code> 인증+이메일 확인, 사용자별 작성 제한</p>
@@ -690,22 +699,22 @@ npm run test:container</code></pre>
 <p>Render 자동 배포는 꺼져 있다. 최신 코드 저장 후 서비스의 <strong>Manual Deploy → Deploy latest commit</strong>을 실행해야 공개 페이지가 생긴다. Live 상태는 실제 대시보드/응답으로 확인한다.</p>
 <h5>문서 로딩과 목차</h5>
 <p>온라인 HTML은 이미지를 별도 해시 파일(<code>/project-assets/</code>)로 분리하고 지연 로딩합니다. 이미지 캐시는 1년이며 내용이 바뀌면 주소가 바뀝니다. 오프라인 HTML은 기존처럼 이미지를 포함합니다. 넓은 화면에는 왼쪽 고정 목차, 작은 화면에는 상단 목차를 제공합니다. 무료 Render의 휴면 후 첫 요청 지연은 남습니다.</p>
-<h3 id="subsection-88">原文 / mobile/README.md</h3>
-<h3 id="subsection-89">duckduck iPhone 앱</h3>
+<h3 id="subsection-89">原文 / mobile/README.md</h3>
+<h3 id="subsection-90">duckduck iPhone 앱</h3>
 <p>React Native + Expo SDK 58 + TypeScript로 만든 iPhone 앱 기반입니다. 기존 HTML을 WebView에 넣지 않고 React Native 화면으로 구현했습니다. 현재 다섯 탭, Todo 편집·예정일 선택, 좌우 스와이프, 완료 후 4초 동안 되돌리기, log, 캘린더, 덕에서 Todo로 추가하는 흐름을 제공합니다.</p>
-<h4 id="subsection-90">개발 환경</h4>
+<h4 id="subsection-91">개발 환경</h4>
 <p>Node.js 24 권장. 이 폴더에서 실행합니다.</p>
 <pre><code>npm ci
 npm start</code></pre>
 <p>Expo Go는 이 프로젝트의 SDK 58을 지원하는 버전이어야 합니다. 같은 네트워크에서 접근 가능한 개발 머신에서 Metro를 실행한 뒤 아이폰의 Expo Go로 QR 코드를 엽니다. 클라우드 내부의 Metro 주소는 아이폰에서 바로 접근할 수 있는 공개 주소가 아닙니다. 이 작업에서는 공개 터널, 배포 주소, 설치 파일을 만들지 않았습니다.</p>
 <p>Linux 클라우드에서는 iOS 시뮬레이터와 Xcode를 실행할 수 없습니다. <code>npm run ios</code>는 Xcode가 설치된 macOS에서 시뮬레이터를 여는 개발 명령입니다. JavaScript 번들 생성은 Linux에서도 가능합니다. TestFlight와 설치용 iOS 빌드는 Apple 서명 및 배포 설정을 정한 뒤 별도로 진행합니다. 앱 식별자와 Expo/EAS 프로젝트·계정은 임의로 등록하지 않았습니다.</p>
-<h4 id="subsection-91">저장 모드</h4>
+<h4 id="subsection-92">저장 모드</h4>
 <p>처음 실행하면 저장 방법을 선택합니다.</p>
 <p>- <strong>클라우드 서버</strong>: 기존 서버의 <code>GET/POST /api/todos</code>, <code>PATCH/DELETE /api/todos/:id</code>를 사용합니다. 접근 가능한 HTTPS 서버의 origin만 입력합니다. 연결 후 회원가입/로그인하면 할 일이 계정별 서버 저장소에 보관됩니다. 자동으로 체험 데이터로 전환하지 않습니다. 내정보 → 서버 연결 설정에서 변경할 수 있습니다.</p>
 <p>- <strong>체험 모드</strong>: 예시 데이터와 변경 내용을 AsyncStorage에 기기별로 저장합니다. 서버 데이터와 분리되며 클라우드 동기화가 아닙니다. 재설치/앱 데이터 삭제로 사라질 수 있습니다.</p>
 <p><code>EXPO_PUBLIC_API_URL</code>을 빌드/개발 시 지정하면 최초 서버 기본값으로 사용합니다. 저장된 기기 설정이 우선합니다. Expo의 <code>EXPO_PUBLIC_*</code> 값은 앱에 포함되므로 비밀번호나 API 키를 넣으면 안 됩니다. 서버 주소는 비밀이 아닙니다. 물리 아이폰에서 <code>localhost</code>는 클라우드 서버가 아니라 아이폰 자신입니다. HTTP loopback은 개발 모드에서만 허용하며, 실제 연결에는 HTTPS 주소를 사용합니다.</p>
 <p>이메일·비밀번호 회원가입/로그인과 계정별 Todo 접근 제어를 제공합니다. 서버는 DATA_DIR의 SQLite에 계정과 할 일을 저장합니다. 아이폰의 세션 토큰은 SecureStore에 보관하며 AsyncStorage에는 넣지 않습니다. 웹은 HttpOnly 쿠키를 사용합니다. 로그아웃과 세션 만료 시 화면의 이전 계정 데이터와 수정창을 지웁니다. 이메일 인증·비밀번호 재설정·계정 삭제와 배포용 볼륨·백업 구성을 추가했습니다. 실제 발송 서비스와 운영 호스트는 준비 후 활성화해야 합니다. OpenAI는 보류 상태이고 Google·Slack·Notion은 OAuth 승인 후 선택한 자료를 읽도록 구현했습니다. 실제 공급자 계정은 아직 연결하지 않았습니다. 덕은 입력을 Todo로 옮기는 UI이며 실제 AI 응답을 생성하지 않습니다.</p>
-<h4 id="subsection-92">검증</h4>
+<h4 id="subsection-93">검증</h4>
 <pre><code>npm run typecheck
 npm test
 npm run export:ios -- --max-workers 2
@@ -714,7 +723,7 @@ npm run test:e2e
 npm run test:web-auth</code></pre>
 <p><code>test:e2e</code>는 먼저 생성한 <code>dist-web</code>의 실제 React Native Web 번들을 Chromium으로 실행합니다. 기본 브라우저 경로는 <code>/usr/bin/chromium</code>이며 <code>PLAYWRIGHT_CHROMIUM_EXECUTABLE</code>로 바꿀 수 있습니다. 실제 Node API 서버를 임시 데이터 폴더와 임의 포트에 실행하고, 테스트 HTTPS origin의 요청만 그 서버에 전달합니다. 서버의 실제 개발 데이터와 기기의 실제 설정을 건드리지 않습니다. 스와이프·4초 타이머·log 복원·캘린더·덕→Todo·회원가입·로그인·계정별 서버 저장·새로고침 후 로그인 유지·로그아웃·다른 계정 분리·세션 만료·실패 복구를 확인합니다. test:web-auth는 기존 웹 UI에서도 쿠키 로그인과 계정 분리를 검증합니다. 이것은 iOS 기기에서 수행한 테스트는 아닙니다.</p>
 <p>검증 산출물은 <code>dist-ios/</code>, <code>dist-web/</code>에 생성하며 Git에서는 제외합니다. iOS export의 <code>.hbc</code>는 Hermes 번들이며 아이폰 설치 파일(<code>.ipa</code>)이 아닙니다.</p>
-<h4 id="subsection-93">제한된 클라우드에서 실행</h4>
+<h4 id="subsection-94">제한된 클라우드에서 실행</h4>
 <p>이 환경에서는 홈 디렉터리가 쓰기 제한되어 있으므로 캐시와 Expo 상태 위치를 명시합니다. Expo CLI가 제공하는 shell 전용 상태 디렉터리 설정을 사용하며 HOME이나 기존 인증 파일을 변경하지 않습니다.</p>
 <pre><code>npm ci --cache /workspace/.cache/npm
 __UNSAFE_EXPO_HOME_DIRECTORY=/workspace/.cache/expo \
@@ -722,10 +731,10 @@ DOTSLASH_CACHE=/workspace/.cache/dotslash \
 EXPO_NO_TELEMETRY=1 EXPO_NO_CACHE=1 \
 npm start -- --offline --port 8091</code></pre>
 <p><code>--offline</code>은 Metro의 외부 API 조회를 생략하며 앱의 HTTPS 서버 통신을 비활성화하지 않습니다. 클라우드 작업은 이미 격리되어 있으므로 기존 <code>/workspace/donknow</code> 체크아웃을 사용하고 별도 Git worktree를 만들지 않습니다. 캐시 경로에는 인증 상태가 생길 수 있으므로 저장소나 스크린샷에 포함하지 않습니다.</p>
-<h4 id="subsection-94">로그인 화면과 저장</h4>
+<h4 id="subsection-95">로그인 화면과 저장</h4>
 <p>클라우드 서버를 고른 다음 이메일·비밀번호로 로그인하거나 회원가입합니다. 비밀번호는 10~128자입니다. 계정이 없으면 ‘처음이에요 · 회원가입’을 누릅니다. 내정보에서 계정 이메일을 확인하고 로그아웃할 수 있습니다. 서버 주소별로 아이폰의 SecureStore에 로그인 토큰을 보관하며 다른 서버로 보내지 않습니다. 웹 내보내기에서는 UI와 API를 같은 사이트에서 제공해야 HttpOnly·SameSite=Strict 쿠키를 안정적으로 사용할 수 있습니다. Expo 웹 개발 서버와 별도 API origin의 조합은 별도 프록시 설정이 필요합니다. native API 요청은 이 브라우저 쿠키 제약과 다릅니다.</p>
 <p>이메일 인증·비밀번호 재설정은 발송 큐와 함께 구현했고 실제 Resend 계정/발신 도메인 설정이 필요합니다. 소셜 로그인은 별도입니다. 서버 데이터 위치와 기존 todos.json의 명시적 가져오기는 루트 README를 참고하세요.</p>
-<h4 id="subsection-95">알림·외부 서비스·계정 관리</h4>
+<h4 id="subsection-96">알림·외부 서비스·계정 관리</h4>
 <p>Todo 편집에서 알림 시간을 저장하고 내정보에서 기기 알림을 켭니다. Expo Notifications를 사용하며 완료·삭제·로그아웃 시 취소합니다. 가까운 60개부터 예약하고, 웹에서는 예약 시간을 저장하기만 합니다. 실제 기기에서 울리는지 검증하는 것은 iPhone 배포/실기기 단계에서 진행합니다.</p>
 <p>내정보에서 이메일 인증, 비밀번호 재설정, 계정 삭제와 Google·Slack·Notion 연결을 관리합니다. 연결 항목에서 권한을 선택해 OAuth를 시작하고 승인한 자료를 Todo에 가져올 수 있습니다. 공급자 토큰은 서버에서 암호화하며 기기에는 전달하지 않습니다. OAuth 네이티브 복귀는 duckduck:// scheme을 등록한 개발/설치 빌드에서 확인해야 합니다. 현재는 외부 앱 등록/자격 증명이 없어 실제 연결을 활성화하지 않았습니다.</p>
 <p>배포·발송 서비스 등록·OAuth callback·백업/키 보관은 <a href="https://github.com/sjfieni/donknow/blob/main/docs/operations.md">운영 안내</a>를 참고하세요. AI 연결과 iPhone 배포 자체는 이번 작업에서 진행하지 않았습니다.</p><section id="feedback" class="feedback"><h2>댓글 · 수정 요청</h2><p class="feedback-warning">이 문서와 댓글은 링크를 가진 사람이 볼 수 있어요. 비밀번호·API 키·개인정보는 적지 마세요. 덕 계정으로 로그인하고 이메일 인증을 마치면 작성할 수 있어요.</p><p>문서의 절이나 이미지 옆 수정 요청 버튼으로 위치를 지정하세요. 댓글을 남긴 뒤 AI에게 이 페이지 주소와 댓글 위치를 알려주세요. 자동으로 감시하거나 수정하지는 않습니다.</p>
