@@ -350,6 +350,11 @@ feedback = r'''<section id="feedback" class="feedback"><h2>댓글 · 수정 요�
 <label>댓글 상태<select id="feedback-filter"><option value="all">전체</option><option value="open">열린 요청</option><option value="resolved">반영 확인</option></select></label><button id="feedback-refresh" type="button">댓글 새로고침</button><button id="feedback-copy" type="button">AI에 전달할 댓글 복사</button><textarea id="feedback-copy-text" aria-label="AI에 전달할 요청" readonly hidden></textarea><p><a href="/api/project/comments?status=open">AI에게 전달할 열린 댓글 목록(JSON)</a></p><div id="feedback-list"></div><button id="feedback-more" type="button" hidden>댓글 더 보기</button></section><script src="/project-comments.js" defer></script>'''
 project = project.replace('실제 Notion에 생성된 페이지가 아니라 <strong>한 페이지 가져오기 원본</strong>입니다.', '외부에서 읽고 댓글로 수정 요청을 남길 수 있는 프로젝트 문서입니다.')
 project = project.replace('</body>',feedback+'</body>')
+# Give navigation its own grid column rather than overlaying the document.
+aside = re.search(r'<aside class="project-toc".*?</aside>', project).group(0)
+project = project.replace(aside, '', 1)
+project = project.replace('<body>', '<body class="project-layout">'+aside+'<main class="project-content">', 1)
+project = project.replace('</body>', '</main></body>', 1)
 (ROOT/'public/project.html').write_text(project)
 (OUT/'IMPORT-README.txt').write_text('개인 Notion의 올바른 계정/워크스페이스에 로그인한 뒤 설정 또는 사이드바의 가져오기 → Markdown & CSV에서 duckduck-notion-import.zip을 선택하세요.\nZIP에는 문서 한 개와 전체 이미지 폴더가 있습니다. 가져온 뒤 이미지 수와 마지막 지침 절이 있는지 확인하세요.\n이 패키지는 아직 실제 Notion 페이지를 만들거나 계정을 조회하지 않았습니다.\nHTML은 전체 이미지가 포함된 오프라인 미리보기입니다.\nsource.zip은 별도의 전체 소스 인계용이며 Notion에 함께 가져오지 않아도 됩니다.\nAPI 키·토큰·DB·node_modules·Git 내부 데이터는 포함하지 않습니다.\n')
 with zipfile.ZipFile(OUT/'duckduck-notion-import.zip') as archive:
