@@ -332,13 +332,49 @@ for item in manifest:
     (asset_dir/filename).write_bytes(data)
     encoded = base64.b64encode(data).decode()
     project = re.sub(r'src="data:[^;]+;base64,'+re.escape(encoded)+r'"', 'loading="lazy" decoding="async" width="960" height="720" src="/project-assets/'+filename+'"', project)
-toc = []
+toc_groups = [
+    ('제품과 현재 상태', 1, 4), ('구현과 서비스 연결', 5, 8),
+    ('운영과 검증', 9, 11), ('협업과 수정 요청', 12, 14),
+    ('이미지와 소스', 15, 16), ('AI 지침과 참고 문서', 17, 99),
+]
+groups = [[] for _ in toc_groups]
+section_index = 0
+sub_index = 0
+current = None
+current_group = 0
 def section_heading(match):
-    index = len(toc)
-    title = re.sub('<[^>]+>', '', match[1])
-    toc.append('<a href="#section-'+str(index)+'">'+title+'</a>')
-    return '<h2 id="section-'+str(index)+'">'+match[1]+'</h2>'
-project = re.sub(r'<h2>(.*?)</h2>', section_heading, project)
+    global section_index, sub_index, current, current_group
+    level, content = int(match[1]), match[2]
+    title = re.sub('<[^>]+>', '', content)
+    if level == 2:
+        anchor = 'section-'+str(section_index)
+        section_index += 1
+        numbered = re.match(r'^(\d+)\.', html.unescape(title))
+        if numbered:
+            number = int(numbered[1])
+            current_group = next(i for i, (_, low, high) in enumerate(toc_groups) if low <= number <= high)
+            current = {'title':title, 'anchor':anchor, 'children':[]}
+            groups[current_group].append(current)
+        elif current is not None:
+            current['children'].append((anchor, title, 3))
+    else:
+        anchor = 'subsection-'+str(sub_index)
+        sub_index += 1
+        if current is not None:
+            current['children'].append((anchor, title, level))
+    return f'<h{level} id="{anchor}">{content}</h{level}>'
+project = re.sub(r'<h([234])>(.*?)</h\1>', section_heading, project)
+toc = []
+for (label, _, _), sections in zip(toc_groups, groups):
+    entries = []
+    for section in sections:
+        link = '<a href="#'+section['anchor']+'">'+section['title']+'</a>'
+        if section['children']:
+            children = ''.join('<a class="toc-small toc-depth-'+str(level)+'" href="#'+anchor+'">'+title+'</a>' for anchor, title, level in section['children'])
+            entries.append('<details class="toc-section"><summary>'+link+'</summary><div class="toc-children">'+children+'</div></details>')
+        else:
+            entries.append('<div class="toc-section">'+link+'</div>')
+    toc.append('<details class="toc-group" open><summary>'+label+'</summary>'+''.join(entries)+'</details>')
 project = project.replace('<body>', '<body><aside class="project-toc" aria-label="목차"><details open><summary>목차</summary><nav>'+''.join(toc)+'<a href="#feedback">댓글 · 수정 요청</a></nav></details></aside>', 1)
 project = project.replace('<title>', '<meta name="robots" content="noindex"><meta name="document-version" content="'+CODE+'"><link rel="stylesheet" href="/project-comments.css"><title>',1)
 project = project.replace('<body>', '<body><nav class="project-nav"><strong>duckduck 개발 문서</strong><a href="/">덕 앱</a><a href="#feedback">댓글·수정 요청</a><button id="feedback-selection" type="button">선택한 문장에 댓글</button></nav>',1)
