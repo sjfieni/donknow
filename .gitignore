@@ -12,3 +12,6 @@ backups/
 .token-key
 
 *.duckbackup
+
+deliverables/
+__pycache__/

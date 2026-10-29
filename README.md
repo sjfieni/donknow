@@ -67,7 +67,7 @@ npm run preview:build
 - Google(기본 캘린더·Gmail·Drive), Slack, Notion OAuth와 선택적 Todo 가져오기. 읽기 권한과 계정별 자료를 분리하고 페이지 이동·중복 방지·연결 해제를 지원합니다.
 - Docker/Compose·Caddy HTTPS·비공개 영구 볼륨, 자동 서명 백업과 새 디렉터리 복원, 선택적 S3 외부 보관.
 
-실제 호스트·도메인·이메일 발송 계정·OAuth 앱·S3 버킷은 아직 없습니다. 코드/모의 검증과 외부 서비스 활성화는 다릅니다. 필요한 등록·환경 변수·운영 절차는 [운영 안내](docs/operations.md)를 참고하세요.
+사용자가 실제 Render/Turso 기본 동작, 이메일 인증, Google Tasks 읽기 연결을 확인했습니다. 추가 서비스와 수정 동기화·백업 활성화는 별도 확인이 필요합니다. 코드/모의 검증과 외부 서비스 활성화는 다릅니다. 필요한 등록·환경 변수·운영 절차는 [운영 안내](docs/operations.md)를 참고하세요.
 
 ## 테스트 서버 배포
 
@@ -78,3 +78,5 @@ GitHub 코드를 Render에서 배포할 수 있도록 `render.yaml`을 추가했
 현재 공개 테스트 주소에서 개인 계정의 이메일 인증과 Google Tasks를 연결하는 순서는 [이메일·Google 연결 안내](docs/connect-google.md)에 정리했습니다. Resend 기본 발신자는 가입자 본인 이메일 테스트에만 사용할 수 있습니다.
 
 완료 상태 동기화·월별 캘린더·연결 점검·개인 데이터 내보내기·원격 암호화 백업은 [연결·운영 안내](docs/remaining-activation.md)를 참고하세요. Google 원본 쓰기와 자동 백업은 기본적으로 켜져 있지 않습니다.
+
+다른 AI가 이어받을 때는 [개발 지침](AGENTS.md)과 [한 페이지 인계 문서](docs/notion-handoff.md)를 먼저 읽으세요.

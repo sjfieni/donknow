@@ -1,0 +1,252 @@
+{
+  "generatedAt": "2026-10-29",
+  "codeCommit": "e45632a7ee9620d8e19622e39fae45e5d64fffd6",
+  "imageCount": 35,
+  "images": [
+    {
+      "path": "artifacts/calendar.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 67096,
+      "sha256": "eefb3dbfb4f5f95ca664fd530064ee3595113e5d6d018c52d4d506a1d990f351",
+      "import_path": "images/artifacts__calendar.png"
+    },
+    {
+      "path": "artifacts/duckduck.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 53117,
+      "sha256": "f773dfd7a01bf87c0deaabe2f3c9751bb6c6bd5cf883e830e1df6687c6b863b3",
+      "import_path": "images/artifacts__duckduck.png"
+    },
+    {
+      "path": "artifacts/features-overview.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 133916,
+      "sha256": "a1abc8332214ac92610194afaa18563d4540265dd4cbc57e6fd79c2f20e432ba",
+      "import_path": "images/artifacts__features-overview.png"
+    },
+    {
+      "path": "artifacts/log.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 43986,
+      "sha256": "5d2165ae58a95fc81fdf3c9d4b219c1b27078f7f44435b7adf6b3820ac2a14ea",
+      "import_path": "images/artifacts__log.png"
+    },
+    {
+      "path": "artifacts/mobile-account-settings.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 42976,
+      "sha256": "5645efccac27b0fc7338a92e6282ce6300d348abbdd182f14c122c27e13f8a74",
+      "import_path": "images/artifacts__mobile-account-settings.png"
+    },
+    {
+      "path": "artifacts/mobile-apple-reminders.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 29792,
+      "sha256": "5de20ca1843625555e59d8b6382a5601020dc001c12f875c7fae73c5b9e42a7d",
+      "import_path": "images/artifacts__mobile-apple-reminders.png"
+    },
+    {
+      "path": "artifacts/mobile-auth.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 30487,
+      "sha256": "3bf363ba45a3ddf0b992558d1f83be218700345b0b84e36ad3ae45adf128e6df",
+      "import_path": "images/artifacts__mobile-auth.png"
+    },
+    {
+      "path": "artifacts/mobile-calendar.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 28860,
+      "sha256": "3bf0e22b759e58b358aa4358f6906a6394d6627402bc8f4b40447124c170ddd4",
+      "import_path": "images/artifacts__mobile-calendar.png"
+    },
+    {
+      "path": "artifacts/mobile-completed-reference-fixture.png",
+      "category": "모의 응답 테스트 화면",
+      "bytes": 47180,
+      "sha256": "f874cf3f0e21151a275ac225b205da06f2ba640575baae211ba978cc48b23f00",
+      "import_path": "images/artifacts__mobile-completed-reference-fixture.png"
+    },
+    {
+      "path": "artifacts/mobile-duck-draft.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 27998,
+      "sha256": "1614a4cbfc9b620958806075ffaf18707979bbe39a51b3ded333af25ab8b3750",
+      "import_path": "images/artifacts__mobile-duck-draft.png"
+    },
+    {
+      "path": "artifacts/mobile-duckduck.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 28133,
+      "sha256": "a6e8e8d6046ff71a8c2eb1e6f762db985528a84da8bb4368208e61d4582bea2b",
+      "import_path": "images/artifacts__mobile-duckduck.png"
+    },
+    {
+      "path": "artifacts/mobile-external-search-fixture.png",
+      "category": "모의 응답 테스트 화면",
+      "bytes": 49900,
+      "sha256": "e8b40c8e46a195f91ca613b76d9d4a9e3a0cf73169a6a8547feef17750cb3737",
+      "import_path": "images/artifacts__mobile-external-search-fixture.png"
+    },
+    {
+      "path": "artifacts/mobile-google-tasks-fixture.png",
+      "category": "모의 응답 테스트 화면",
+      "bytes": 46768,
+      "sha256": "e5bd18b0433240bb645c1dc1283c1284fafdf7c7195107304db178e7dd3900a5",
+      "import_path": "images/artifacts__mobile-google-tasks-fixture.png"
+    },
+    {
+      "path": "artifacts/mobile-kakao-paste.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 29449,
+      "sha256": "f610c074fc79df14cec237091574161974d0ec3fbb086a667ed4a08a90ec28f3",
+      "import_path": "images/artifacts__mobile-kakao-paste.png"
+    },
+    {
+      "path": "artifacts/mobile-kakao-share.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 37581,
+      "sha256": "905cd8d435e3be1c47305ccd717c2e5659aeb4c5b8f842f8fe7c9c726c4bea7a",
+      "import_path": "images/artifacts__mobile-kakao-share.png"
+    },
+    {
+      "path": "artifacts/mobile-log.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 26275,
+      "sha256": "503d66ef4c17e464052b554dbcd1f208577e5ffbfec17aeeca0f2d21184ea9dc",
+      "import_path": "images/artifacts__mobile-log.png"
+    },
+    {
+      "path": "artifacts/mobile-overview.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 145614,
+      "sha256": "0c4a7c633b3390d6c41352d549f6f6dbfde79824f4099ac10cf5bad62d361a80",
+      "import_path": "images/artifacts__mobile-overview.png"
+    },
+    {
+      "path": "artifacts/mobile-personal-export.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 47261,
+      "sha256": "751d3d28bb0b8b890479dbe5126c40bf1b1900341cd75eef9a7baf2acb042da3",
+      "import_path": "images/artifacts__mobile-personal-export.png"
+    },
+    {
+      "path": "artifacts/mobile-profile.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 45289,
+      "sha256": "634042b7bc13d26055bbf9f93dff5d8a82851ebdf6ddce0ca4e0d36def37c43a",
+      "import_path": "images/artifacts__mobile-profile.png"
+    },
+    {
+      "path": "artifacts/mobile-record-search.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 43152,
+      "sha256": "11636c9e389cb1a3da9b55d2064b7ed8cff37f0b0189439dc329c5335c1819f8",
+      "import_path": "images/artifacts__mobile-record-search.png"
+    },
+    {
+      "path": "artifacts/mobile-reminder.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 32047,
+      "sha256": "ca1a7f16d499f17088153b779e47bee12b4178a9d5906da5a7a0da83dc1c03db",
+      "import_path": "images/artifacts__mobile-reminder.png"
+    },
+    {
+      "path": "artifacts/mobile-services.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 39732,
+      "sha256": "6cdc11caa32d410a8160179874ed5dfd4f0cca2b039b290537c0fc4394fdbb3c",
+      "import_path": "images/artifacts__mobile-services.png"
+    },
+    {
+      "path": "artifacts/mobile-task-sync-fixture.png",
+      "category": "모의 응답 테스트 화면",
+      "bytes": 51808,
+      "sha256": "0d4177fd35a446d6f2c27e646faeaee843858bcfae27e127d1a56f604e85ab9c",
+      "import_path": "images/artifacts__mobile-task-sync-fixture.png"
+    },
+    {
+      "path": "artifacts/mobile-todos.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 25042,
+      "sha256": "6c6eb639bae51b053ead1771b8b95918bf18e5d387e80b907b7e8b622b57a5ac",
+      "import_path": "images/artifacts__mobile-todos.png"
+    },
+    {
+      "path": "artifacts/mobile-verification.png",
+      "category": "네이티브 기반 웹의 격리 테스트 화면",
+      "bytes": 34191,
+      "sha256": "b206d0408d7a5dada9c30306a0572d139179f42772c83463e88974567e838d87",
+      "import_path": "images/artifacts__mobile-verification.png"
+    },
+    {
+      "path": "artifacts/overview.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 137266,
+      "sha256": "108db53c7dee5028aa39c2e147e46df6e1f75e523b535aecdcdf4a89daaee73d",
+      "import_path": "images/artifacts__overview.png"
+    },
+    {
+      "path": "artifacts/polish-overview.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 92820,
+      "sha256": "32526ebc62dbdd7cc29df1ef44fda820df843d2f17a52cce19f15b702785edef",
+      "import_path": "images/artifacts__polish-overview.png"
+    },
+    {
+      "path": "artifacts/profile.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 80270,
+      "sha256": "373274654c0efb441423218ea34ac8a68548ba52121bc3acb366cd4bb800e184",
+      "import_path": "images/artifacts__profile.png"
+    },
+    {
+      "path": "artifacts/todos.png",
+      "category": "단계별 개요 또는 초기 웹 프로토타입",
+      "bytes": 57566,
+      "sha256": "8edebde479223a9cf2377144ccf88ac1125c9b7852603c8f9300b3965065f3bc",
+      "import_path": "images/artifacts__todos.png"
+    },
+    {
+      "path": "mobile/assets/android-icon-background.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 17549,
+      "sha256": "fb139c2dee362ebf2070e23b96da6fc0d43f8492de38b8af1fd7223e19b5861d",
+      "import_path": "images/mobile__assets__android-icon-background.png"
+    },
+    {
+      "path": "mobile/assets/android-icon-foreground.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 78796,
+      "sha256": "9e3d0315a33c6799de601dd34cd8bf8cc3a8d16f3bf75592baec2ceb7240b391",
+      "import_path": "images/mobile__assets__android-icon-foreground.png"
+    },
+    {
+      "path": "mobile/assets/android-icon-monochrome.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 4140,
+      "sha256": "6371fc2c12e33ad2215a86c281db3d682a81bebe7c957a842c13b8bf00cceb83",
+      "import_path": "images/mobile__assets__android-icon-monochrome.png"
+    },
+    {
+      "path": "mobile/assets/favicon.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 1129,
+      "sha256": "a4e030697a7571b3e95d31860e4da55d2f98e5e861e2b55e414f45a8556828ba",
+      "import_path": "images/mobile__assets__favicon.png"
+    },
+    {
+      "path": "mobile/assets/icon.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 393493,
+      "sha256": "119462bb78eb240a65c869fc067ee599639b3cb5a41953f25c07b17d2a8c7e0f",
+      "import_path": "images/mobile__assets__icon.png"
+    },
+    {
+      "path": "mobile/assets/splash-icon.png",
+      "category": "앱 초기 리소스·최종 브랜딩 미확정",
+      "bytes": 17547,
+      "sha256": "5f4c0a732b6325bf4071d9124d2ae67e037cb24fcc9c482ef82bea742109a3b8",
+      "import_path": "images/mobile__assets__splash-icon.png"
+    }
+  ]
+}
