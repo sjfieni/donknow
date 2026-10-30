@@ -44,6 +44,12 @@
           "remindersPermission": "선택한 미리 알림을 덕의 Todo로 가져오기 위해 접근 권한이 필요해요."
         }
       ]
-    ]
+    ],
+    "owner": "thepmpo",
+    "extra": {
+      "eas": {
+        "projectId": "f7827732-1b41-485f-b3b2-6bcc145f3c44"
+      }
+    }
   }
 }

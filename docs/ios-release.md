@@ -8,6 +8,7 @@
 - Bundle ID 후보: `com.sjfieni.duckduck`. 저장소 소유 이름을 기준으로 한 설정값이며 Apple 등록·사용 가능 여부는 확인 전이다. 실제 개발자 계정에서 소유권을 확인한 후 최초 등록한다.
 - EAS production: App Store 배포, 자동 빌드 번호 증가, 기존 HTTPS 서버를 기본 연결로 포함. 서버 키·비밀값은 앱에 넣지 않는다.
 - production 빌드가 자동으로 심사 제출되거나 공개되지는 않는다.
+- Expo 웹 프로젝트는 사용자가 생성했다: `thepmpo/duckduck-donknow`, Project ID `f7827732-1b41-485f-b3b2-6bcc145f3c44`. 사용자 제공 식별자를 `mobile/app.json`의 owner와 extra.eas.projectId에 반영했다. 원격 계정 접근 권한은 별도 확인이 필요하다.
 - 이 클라우드에는 EAS CLI와 Expo/Apple 제출 인증이 없다. 아직 IPA 생성·서명·TestFlight 업로드·심사 제출을 하지 않았다.
 
 ## 계정 연결 후 실행
@@ -16,7 +17,7 @@
 
 ```sh
 npx eas-cli@latest login
-npx eas-cli@latest init
+npx eas-cli@latest init --id f7827732-1b41-485f-b3b2-6bcc145f3c44
 npx eas-cli@latest build --platform ios --profile production
 ```
 
@@ -45,3 +46,5 @@ npx eas-cli@latest submit --platform ios --profile production --id BUILD_ID
 가입·이메일 인증·재로그인·삭제, Todo 스와이프/4초 되돌리기/log, 전체 캘린더, 앱 재실행, 네트워크 끊김/복구를 확인한다. Google/Notion OAuth 승인 후 `duckduck://` 복귀, 완료 동기화, 미리 알림 거절/허용/가져오기/수동 상태 반영, 기기 알림 및 완료/로그아웃 후 예약 취소, JSON·카카오 공유도 확인한다. 타 계정 로그인 시 이전 데이터가 사라지는지 확인한다.
 
 JavaScript iOS export는 호환성 검증이며 서명 IPA·실기기 검증을 대신하지 않는다.
+
+Expo에서 GitHub 저장소를 연결하는 경우 저장소는 `sjfieni/donknow`, 앱 루트는 `mobile`, 브랜치는 `main`이다. 프로젝트 ID 설정만으로 GitHub 연결·서명 인증·빌드 실행이 완료된 것으로 기록하지 않는다.
