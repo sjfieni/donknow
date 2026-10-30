@@ -14,16 +14,17 @@ export function IntegrationsScreen({ store, initialProvider, onClose }: { store:
   const [busy, setBusy] = useState(false), [error, setError] = useState(''), [message, setMessage] = useState(''), [disconnecting, setDisconnecting] = useState(false);
   const [taskStatus, setTaskStatus] = useState<'incomplete' | 'completed'>('incomplete');
   const initialScopesLoaded=useRef(false);
+  const [statusRevision,setStatusRevision]=useState(0);
   const active = useRef(true), version = useRef(0);
   const current = statuses.find(item => item.provider === provider);
-  async function loadStatus() { if (!store.user) return; try { const result = await store.featureRequest('/api/integrations') as Status[]; if (active.current) {setStatuses(result);const google=result.find(item=>item.provider==='google');if(!initialScopesLoaded.current){initialScopesLoaded.current=true;if(google?.connected&&google.features.length)setFeatures(google.features);}} } catch (e) { if (active.current) setError(e instanceof Error ? e.message : '연결 상태를 확인하지 못했어요.'); } }
+  async function loadStatus() { if (!store.user) return; try { const result = await store.featureRequest('/api/integrations') as Status[]; if (active.current) {setStatuses(result);setStatusRevision(value=>value+1);const google=result.find(item=>item.provider==='google');if(!initialScopesLoaded.current){initialScopesLoaded.current=true;if(google?.connected&&google.features.length)setFeatures(google.features);}} } catch (e) { if (active.current) setError(e instanceof Error ? e.message : '연결 상태를 확인하지 못했어요.'); } }
   useEffect(() => { active.current = true; void loadStatus(); const listener = AppState.addEventListener('change', state => { if (state === 'active') void loadStatus(); }); return () => { active.current = false; version.current++; listener.remove(); }; }, []);
   function choose(value: Provider) { version.current++; setTaskStatus('incomplete'); setProvider(value); setFeature(value === 'google' ? 'calendar' : value === 'slack' ? 'channels' : 'pages'); setChannel(null); setItems([]); setNext(null); setSelected([]); setError(''); setMessage(''); setDisconnecting(false); }
-  async function authorize() {
+  async function authorize(requestedFeatures = features) {
     setBusy(true); setError(''); setMessage(''); let popup: Window | null = null;
     if (Platform.OS === 'web') { popup = window.open('about:blank', '_blank'); if (popup) popup.opener = null; }
     try {
-      const value = await store.featureRequest(`/api/integrations/${provider}/authorize`, 'POST', { features }) as { url: string };
+      const value = await store.featureRequest(`/api/integrations/${provider}/authorize`, 'POST', { features: requestedFeatures }) as { url: string };
       const url = new URL(value.url); if (url.protocol !== 'https:' || !['accounts.google.com', 'slack.com', 'api.notion.com'].includes(url.hostname)) throw new Error('연결 주소를 확인하지 못했어요.');
       if (Platform.OS === 'web') { if (!popup) throw new Error('브라우저에서 팝업을 허용한 뒤 다시 눌러주세요.'); popup.location.href = value.url; setMessage('연결을 승인한 뒤 이 화면에서 새로고침을 눌러주세요.'); }
       else { const result = await WebBrowser.openAuthSessionAsync(value.url, 'duckduck://integrations/complete'); if (result.type !== 'success') setMessage('연결 창을 닫았어요. 다시 연결할 수 있어요.'); }
@@ -64,7 +65,7 @@ export function IntegrationsScreen({ store, initialProvider, onClose }: { store:
         {!store.user.emailVerified && <Text style={[s.muted, { marginBottom: 15 }]}>내정보에서 이메일 인증을 먼저 완료해주세요.</Text>}
         <Button title={current?.connected ? '연결 권한 다시 선택' : `${names[provider]} 연결`} disabled={busy || !current?.configured || !store.user.emailVerified || (provider === 'google' && !features.length)} onPress={() => { void authorize(); }} />
         <View style={{ height: 10 }} /><Button title="연결 상태 새로고침" quiet disabled={busy} onPress={() => { void loadStatus(); }} />
-        {provider==='google'&&current?.connected&&<TaskSyncPanel key={current.features.join(',')} store={store} />}
+        {provider==='google'&&current?.connected&&<TaskSyncPanel key={current.features.join(',')} store={store} refreshKey={statusRevision} onRequestPermission={()=>{const requested=[...new Set([...features,'tasks','tasksWrite'])];setFeatures(requested);void authorize(requested);}} />}
       {current?.connected && <><View style={{height:10}}/><Button title="연결 점검" quiet disabled={busy} onPress={()=>{void diagnose();}} /><View style={{ height: 10 }} /><Button title="연결 해제" quiet disabled={busy} onPress={() => setDisconnecting(true)} /></>}
       </View>
       {disconnecting && <View style={s.card}><Text style={[s.subtitle, { marginBottom: 15 }]}>연결을 해제해도 이미 가져온 Todo는 남아 있어요.</Text><Button title="연결 해제 확인" disabled={busy} onPress={() => { void disconnect(); }} /></View>}

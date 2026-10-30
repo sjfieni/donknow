@@ -1,6 +1,6 @@
 # duckduck — 제품·구현·운영·이미지·AI 인계 문서
 
-> 기준: 2026-10-29 · 한국 시간 · 기능 코드 e80a08e · 문서와 GitHub 소스가 이어받기의 기준입니다.
+> 기준: 2026-10-30 · 한국 시간 · 기능 코드 e80a08e · 문서와 GitHub 소스가 이어받기의 기준입니다.
 > 실제 Notion에 생성된 페이지가 아니라 **한 페이지 가져오기 원본**입니다. 아래 상태 표에서 구현/자동 테스트/실사용 확인을 구분합니다.
 
 ## 1. 이 프로젝트가 하려는 일
@@ -222,6 +222,7 @@ a130c93 Refresh published document snapshot and feedback instructions
 be39c5d Speed up public project document with lazy cached images and linked contents
 23b592d Reserve a dedicated navigation column in public project layout
 e80a08e Organize project contents into grouped expandable heading hierarchy
+6bab482 Record universal paste-to-todo extraction in product backlog
 ```
 
 - 새 범위의 실제 외부 연결·아이폰 기기 확인: 아직 완료로 표시하지 않음.
@@ -764,6 +765,12 @@ Render에 `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET`를 등록한다. 덕에서 
 #### 7. 원격 DB 백업·복구
 
 [원격 백업 안내](https://github.com/sjfieni/donknow/blob/main/docs/remote-recovery.md)를 따른다. GitHub 비밀 설정이 필요하며 기본값은 비활성화다. 파일은 인증된 AES-256-GCM으로 암호화된다. 복원은 다른 빈 DB에만 허용한다. 세션/인증 코드/전송 대기열은 복원 후 제거하고 완료 동기화를 끈다.
+
+#### 2026-10-30 실제 확인 및 동기화 화면 보완
+
+- 사용자 확인: Google 캘린더·메일·Drive 기본 동작, Notion 연결·페이지 조회·Todo 가져오기.
+- 사용자 확인: GitHub 백업 비밀 설정·활성화 변수 등록 후 첫 수동 실행 성공 (Actions run 40991528894). 매일 한국 시간 03:30 예약이며 정기 실행 결과와 실제 복원 훈련은 별도 확인한다.
+- Google Tasks 완료 동기화는 실제 확인 중이다. 연결 상태 새로고침 시 동기화 권한도 다시 조회하도록 수정하고, 권한이 없으면 패널에서 수정 권한 승인을 바로 시작할 수 있게 했다. 승인 전에는 활성화할 수 없으며, 승인 후에도 완료 동기화 켜기는 사용자가 별도로 누른다.
 
 ### 原文 / docs/remote-recovery.md
 
