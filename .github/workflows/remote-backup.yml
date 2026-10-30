@@ -25,6 +25,8 @@ jobs:
       - run: npm ci --omit=dev --no-audit --no-fund
       - name: Create authenticated encrypted snapshot
         run: npm run backup:remote -- --out "$RUNNER_TEMP/duckduck.duckbackup"
+      - name: Restore into an isolated local DB and verify integrity
+        run: npm run backup:verify -- "$RUNNER_TEMP/duckduck.duckbackup"
       - uses: actions/upload-artifact@v4
         with:
           name: duckduck-encrypted-${{ github.run_id }}

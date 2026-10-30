@@ -20,7 +20,7 @@ npm run backup:remote -- --out /안전한/경로/duckduck.duckbackup
    - `TURSO_AUTH_TOKEN` (백업에는 읽기 전용 토큰 권장)
    - Render에 보관된 원래 `INTEGRATION_KEY_SEED` 또는, 별도 키를 사용했다면 `INTEGRATION_TOKEN_KEY`
 2. Repository variable `DUCKDUCK_BACKUP_ENABLED`를 `true`로 설정한다.
-3. Actions → Encrypted remote database backup → Run workflow로 한 번 실행하고 성공 여부를 확인한다.
+3. Actions → Encrypted remote database backup → Run workflow로 한 번 실행하고 성공 여부를 확인한다. 백업 생성 후 `Restore into an isolated local DB and verify integrity` 단계가 실제 파일을 임시 DB에 복원해 검사한다. 통과한 파일만 artifact로 보관한다.
 4. 성공한 실행의 암호화 artifact를 다운로드해 보관한다. 스케줄은 매일 한국 시간 03:30, artifact 보관은 7일이다.
 
 비밀 설정과 활성화 변수가 없으면 백업 작업은 활성화되지 않는다. 파일만 추가했다고 백업이 이미 운영 중이라고 말하지 않는다. GitHub Actions/아티팩트도 계정의 무료 한도가 있으므로 유료 사용 한도를 늘리지 않고 사용량을 확인한다. 백업 파일과 암호화 키/시드는 서로 분리해 안전하게 보관한다. 잃어버린 키는 복원할 수 없다.
@@ -43,3 +43,15 @@ npm run backup:remote -- --restore /안전한/경로/duckduck.duckbackup
 5. 검증 후에만 Render의 DB URL/토큰을 새 DB로 바꾼다. 암호화 시드는 그대로 유지한다. 기존 DB는 검증이 끝날 때까지 보존한다.
 
 이 저장소에서는 격리된 DB로 암호화·무결성·빈 DB 복원·자격 증명 재생 방지 검증을 수행했다. 실제 Turso 계정의 스케줄과 재난 복구 훈련은 비밀 설정과 실행 확인이 필요하다.
+
+## 백업 파일의 자동 복원 검증
+
+```sh
+npm run backup:verify -- /안전한/경로/duckduck.duckbackup
+```
+
+원래 암호화 키/시드만 있으면 된다. 이 명령은 원격 DB URL·토큰을 사용하지 않고, 임시 폴더의 native libSQL DB로만 복원한다. 운영 DB에는 접속하지 않으며, 검사 종료 시 임시 DB를 삭제한다. 별도 서버·유료 DB·새 비밀 설정이 필요 없다.
+
+검사 항목은 인증된 복호화, 스키마/데이터 복원, SQLite 무결성과 외래 키, Todo 형식, 외부 연결 토큰 복호화, 예전 세션/인증 코드/전송 대기 제거, 완료 동기화 비활성화다. 로그에는 계정·Todo·댓글·연결의 합계와 검사 결과만 출력하고 원문·주소·토큰은 출력하지 않는다. 앱 서버와 메일/동기화 워커를 실행하지 않는다.
+
+매일 백업 작업에도 이 단계를 포함한다. GitHub Actions에서 해당 단계까지 초록색인지 확인해야 실제 운영 백업 파일의 복원 검증 완료로 기록한다. 개발 환경에서는 격리된 데이터의 정상 복원, 다른 키·변조 거절, 원본 DB 세션/전송 대기 유지까지 검증했다. 이 검사는 실제 Turso의 새 원격 DB 연결·운영 서버 전환을 시험하는 재난 복구 훈련과는 구분한다.
