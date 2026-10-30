@@ -70,3 +70,7 @@ Todo 편집에서 알림 시간을 저장하고 내정보에서 기기 알림을
 내정보에서 이메일 인증, 비밀번호 재설정, 계정 삭제와 Google·Slack·Notion 연결을 관리합니다. 연결 항목에서 권한을 선택해 OAuth를 시작하고 승인한 자료를 Todo에 가져올 수 있습니다. 공급자 토큰은 서버에서 암호화하며 기기에는 전달하지 않습니다. OAuth 네이티브 복귀는 duckduck:// scheme을 등록한 개발/설치 빌드에서 확인해야 합니다. 현재는 외부 앱 등록/자격 증명이 없어 실제 연결을 활성화하지 않았습니다.
 
 배포·발송 서비스 등록·OAuth callback·백업/키 보관은 [운영 안내](../docs/operations.md)를 참고하세요. AI 연결과 iPhone 배포 자체는 이번 작업에서 진행하지 않았습니다.
+
+## App Store 출시 준비 — 2026-10-30
+
+사용자 요청으로 iPhone 배포 보류를 해제했다. `eas.json`의 production 프로필은 기존 HTTPS API 주소를 기본값으로 포함하고 App Store 서명 빌드와 빌드 번호 증가를 설정한다. Apple/Expo 프로젝트·서명 연결은 아직 완료하지 않았다. Bundle ID `com.sjfieni.duckduck`은 등록 전 후보다. [출시 안내](../docs/ios-release.md)의 계정 연결·실기기 검증·심사 준비를 따른다. 기존 절의 미배포 설명은 당시 상태이며 서명 빌드 없이 iOS JS export만 통과했다.

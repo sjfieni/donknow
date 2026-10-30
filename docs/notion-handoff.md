@@ -225,6 +225,7 @@ e80a08e Organize project contents into grouped expandable heading hierarchy
 6bab482 Record universal paste-to-todo extraction in product backlog
 72ff28b Refresh Google task sync eligibility after reconnect and expose permission recovery
 287a041 Verify every encrypted backup by restoring into an isolated local database
+e20d82b Record verified live backup restoration and remaining scheduled-run check
 ```
 
 - 새 범위의 실제 외부 연결·아이폰 기기 확인: 아직 완료로 표시하지 않음.
@@ -402,7 +403,7 @@ e80a08e Organize project contents into grouped expandable heading hierarchy
 - 좌우 스와이프로 완료/미완료를 바꾸며 완료 항목은 약 4초 뒤 리스트에서 사라지고 log에서 복원할 수 있다.
 - 덕의 초안은 제목/날짜를 확인해 Todo로 옮긴다. AI는 현재 연결하지 않았다.
 - 완료된 외부 기록은 조회·검색 참고용이고 신규 Todo로 가져오지 않는다. 미완료만 선택해서 가져온다.
-- AI API 연결과 iPhone 배포/서명/스토어 등록은 사용자 명시적 새 요청 전까지 보류한다. 기능 보완을 요청했다고 이 보류를 해제하지 않는다.
+- AI API 연결은 계속 보류한다. 사용자는 2026-10-30 iPhone App Store 출시를 명시적으로 요청했으므로 iPhone 빌드·서명·스토어 제출 준비를 진행한다. 계정 접근·유료 가입은 실제 보유/승인을 확인하고, 제출/공개 상태는 실제 결과로만 기록한다.
 - 무료 구성이 우선이다. 유료 자원/플랜/자동 업그레이드를 새로 활성화하지 않는다. 무료 한도와 첫 접속 지연은 정확히 설명한다.
 
 ## 데이터·외부 변경
@@ -463,7 +464,7 @@ e80a08e Organize project contents into grouped expandable heading hierarchy
 - iPhone용 할 일 관리·개인 비서 앱. 비서 이름은 duckduck, 애칭은 덕.
 - 기존 비서의 설정이나 대화 기록을 복사하지 않고 자연스럽게 대화하며 일을 돕는 경험을 지향한다.
 - 토스의 여백·정보 계층·파란색 포인트를 참고하고 Todo 목록은 단순하게 유지한다.
-- AI 연결과 iPhone 배포는 사용자가 보류했다. 그 밖의 기능은 구현하고 외부 계정 준비 전까지 독립 검증한다.
+- AI 연결은 계속 보류한다. 2026-10-30 사용자가 iPhone App Store 출시를 요청하여 배포 준비를 시작했다. Apple 개발자 계정은 보유한다고 응답했으며 Expo 계정 연결·서명·TestFlight·심사는 확인 전이다. [iPhone 출시 안내](https://github.com/sjfieni/donknow/blob/main/docs/ios-release.md)를 따른다.
 
 #### 하단 내비게이션
 
@@ -700,6 +701,10 @@ GitHub 업데이트 후 Render의 해당 Blueprint에서 **Manual sync**로 설�
 기준: 2026-10-29, 무료 Render + Turso. AI 연결과 아이폰 배포는 보류한다.
 
 #### 확인 상태
+
+##### iPhone 출시 요청 — 최신 변경
+
+사용자가 2026-10-30 App Store 출시를 명시적으로 요청했다. iPhone 배포 보류를 해제하고 빌드·서명·스토어 제출 준비를 진행한다. Apple 개발자 계정만 보유한다고 응답했으며 Expo 계정 연결은 필요하다. 앱 1.0.0·EAS 빌드 설정과 기존 API 기본 주소를 준비하고 TypeScript/iOS JS export를 검증했다. 서명 IPA·TestFlight·실기기·심사 제출은 아직 완료되지 않았다. AI·Slack과 범용 붙여넣기 자동 추출은 보류 유지한다. 세부 항목은 [출시 안내](https://github.com/sjfieni/donknow/blob/main/docs/ios-release.md)를 따른다.
 
 ##### 최신 사용자 확인 (2026-10-30)
 
@@ -1057,6 +1062,56 @@ Render 자동 배포는 꺼져 있다. 최신 코드 저장 후 서비스의 **M
 
 온라인 HTML은 이미지를 별도 해시 파일(`/project-assets/`)로 분리하고 지연 로딩합니다. 이미지 캐시는 1년이며 내용이 바뀌면 주소가 바뀝니다. 오프라인 HTML은 기존처럼 이미지를 포함합니다. 넓은 화면에는 왼쪽 고정 목차, 작은 화면에는 상단 목차를 제공합니다. 무료 Render의 휴면 후 첫 요청 지연은 남습니다.
 
+### 原文 / docs/ios-release.md
+
+### iPhone 첫 출시 준비
+
+2026-10-30 사용자가 iPhone App Store 출시를 요청했다. AI 연결은 계속 보류한다.
+
+#### 현재 상태
+
+- Expo 앱 버전 1.0.0, iPhone 전용, 초기 빌드 번호 1.
+- Bundle ID 후보: `com.sjfieni.duckduck`. 저장소 소유 이름을 기준으로 한 설정값이며 Apple 등록·사용 가능 여부는 확인 전이다. 실제 개발자 계정에서 소유권을 확인한 후 최초 등록한다.
+- EAS production: App Store 배포, 자동 빌드 번호 증가, 기존 HTTPS 서버를 기본 연결로 포함. 서버 키·비밀값은 앱에 넣지 않는다.
+- production 빌드가 자동으로 심사 제출되거나 공개되지는 않는다.
+- 이 클라우드에는 EAS CLI와 Expo/Apple 제출 인증이 없다. 아직 IPA 생성·서명·TestFlight 업로드·심사 제출을 하지 않았다.
+
+#### 계정 연결 후 실행
+
+`mobile/`에서 Expo 계정으로 로그인하고 올바른 Apple 개발자 팀을 선택한다. 비밀번호·OTP·서명 파일을 채팅이나 Git에 넣지 않는다. Apple Developer Program 가입은 일반적으로 연 US$99(지역별 가격 상이)가 필요하다. EAS 무료 빌드 할당량·대기열을 확인하며 유료 업그레이드를 자동으로 진행하지 않는다.
+
+```sh
+npx eas-cli@latest login
+npx eas-cli@latest init
+npx eas-cli@latest build --platform ios --profile production
+```
+
+`eas init`으로 연결된 실제 프로젝트 ID·owner를 저장하고 빌드하기 전에 Bundle ID를 확인한다. 기존 팀이나 인증서가 있으면 재사용 여부를 확인하며 임의로 폐기하지 않는다. App Store Connect에 실제 앱 레코드를 만든 뒤 반환된 App Store 앱 ID를 `eas.json`의 `submit.production.ios.ascAppId`에 추가한다. Apple 팀 ID도 확인 후 필요한 위치에 설정한다. 임의 숫자/플레이스홀더 ID를 넣지 않는다.
+
+```sh
+npx eas-cli@latest submit --platform ios --profile production --id BUILD_ID
+```
+
+실제 성공한 빌드 ID를 지정한다. `--latest`로 다른 빌드를 잘못 제출하지 않는다. 업로드 후 TestFlight 실기기 확인을 먼저 수행하고 App Store Connect에서 심사를 제출한다. 심사 승인 후 공개 시점은 수동으로 관리한다.
+
+#### 심사 전 필요한 내용
+
+- 공개 개인정보처리방침 URL, 지원 URL, 실제 지원 연락처와 운영 주체. 현재 `/project`는 개발 문서이며 개인정보처리방침을 대신하지 않는다.
+- App Store용 아이콘과 실제 iPhone 스크린샷. 웹/모의 응답 이미지를 실기기 캡처로 표시하지 않는다. 현재 기본 리소스는 최종 브랜드 검토 전이다.
+- App Privacy: 이메일/계정 식별자, 사용자 생성 할 일·공개 댓글, 사용자 승인 외부 자료의 수집·목적·사용자 연결 여부를 실제 동작에 맞게 신고한다. 추적/광고 기능은 현재 구현하지 않았다. 수집하지 않는 항목을 선언하지 않으며 실제 Apple 질문에 맞춰 확인한다.
+- 암호화 수출 신고, 연령 등급, 콘텐츠 권리, 지원 지역, 앱 이름 사용 가능 여부를 실제 계정에서 확인한다.
+- 이메일·비밀번호 로그인과 앱 내 계정 삭제를 제공한다. Google/Notion은 외부 자료 연결이며 앱 로그인으로 쓰지 않는다. 인증 방식을 바꾸면 Apple 로그인 관련 심사 요건을 다시 확인한다.
+- 심사용 접근 계정은 별도로 만들고 실제 개인 자료·토큰이 없는 계정을 사용한다. 계정 정보는 App Store Connect 심사 메모의 전용 보안 입력란에만 넣는다.
+- AI 미연결 상태를 숨기거나 AI 대화가 동작한다고 소개하지 않는다. Slack 보류 기능도 동작하는 기능처럼 홍보하지 않는다.
+- Google OAuth 테스트 모드/테스트 사용자 제한은 일반 사용자 출시와 다르다. 일반 사용자 권한 승인 가능 여부와 민감 범위 검증을 확인하고, 준비가 안 된 연결은 최초 공개 범위에서 제외할지 결정한다. Notion도 다른 사용자 계정 승인을 확인한다.
+- Render 무료 서버 휴면 후 첫 응답 지연과 무료 한도는 유지된다. 빌드가 된 것만으로 운영 안정성이 검증됐다고 판단하지 않는다.
+
+#### TestFlight 실기기 확인
+
+가입·이메일 인증·재로그인·삭제, Todo 스와이프/4초 되돌리기/log, 전체 캘린더, 앱 재실행, 네트워크 끊김/복구를 확인한다. Google/Notion OAuth 승인 후 `duckduck://` 복귀, 완료 동기화, 미리 알림 거절/허용/가져오기/수동 상태 반영, 기기 알림 및 완료/로그아웃 후 예약 취소, JSON·카카오 공유도 확인한다. 타 계정 로그인 시 이전 데이터가 사라지는지 확인한다.
+
+JavaScript iOS export는 호환성 검증이며 서명 IPA·실기기 검증을 대신하지 않는다.
+
 ### 原文 / mobile/README.md
 
 ### duckduck iPhone 앱
@@ -1131,3 +1186,7 @@ Todo 편집에서 알림 시간을 저장하고 내정보에서 기기 알림을
 내정보에서 이메일 인증, 비밀번호 재설정, 계정 삭제와 Google·Slack·Notion 연결을 관리합니다. 연결 항목에서 권한을 선택해 OAuth를 시작하고 승인한 자료를 Todo에 가져올 수 있습니다. 공급자 토큰은 서버에서 암호화하며 기기에는 전달하지 않습니다. OAuth 네이티브 복귀는 duckduck:// scheme을 등록한 개발/설치 빌드에서 확인해야 합니다. 현재는 외부 앱 등록/자격 증명이 없어 실제 연결을 활성화하지 않았습니다.
 
 배포·발송 서비스 등록·OAuth callback·백업/키 보관은 [운영 안내](https://github.com/sjfieni/donknow/blob/main/docs/operations.md)를 참고하세요. AI 연결과 iPhone 배포 자체는 이번 작업에서 진행하지 않았습니다.
+
+#### App Store 출시 준비 — 2026-10-30
+
+사용자 요청으로 iPhone 배포 보류를 해제했다. `eas.json`의 production 프로필은 기존 HTTPS API 주소를 기본값으로 포함하고 App Store 서명 빌드와 빌드 번호 증가를 설정한다. Apple/Expo 프로젝트·서명 연결은 아직 완료하지 않았다. Bundle ID `com.sjfieni.duckduck`은 등록 전 후보다. [출시 안내](https://github.com/sjfieni/donknow/blob/main/docs/ios-release.md)의 계정 연결·실기기 검증·심사 준비를 따른다. 기존 절의 미배포 설명은 당시 상태이며 서명 빌드 없이 iOS JS export만 통과했다.
